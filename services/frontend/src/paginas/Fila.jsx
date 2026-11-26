@@ -1,7 +1,7 @@
 // Fila de vistoria: lista ordenada pelo Ganho Esperado + painel de detalhe com a
 // fachada anotada, a explicação do modelo e as evidências que sustentam a indicação.
 import { useCallback, useEffect, useState } from "react";
-import { api, fmt, NOME_CATEGORIA, NOME_FAIXA, useSessao } from "../api";
+import { api, AVISO_LOCALIZACAO, DADOS_DEMONSTRACAO, fmt, NOME_CATEGORIA, NOME_FAIXA, useSessao } from "../api";
 import Fachada from "../componentes/Fachada";
 import { Fatores, SerieConsumo } from "../componentes/Graficos";
 import { Aviso, BarraProb, Botao, Cabecalho, Campo, Carregando, estiloEntrada, Selo, Vazio } from "../componentes/ui";
@@ -231,6 +231,7 @@ function Detalhe({ item, podeAgir, aoGerar }) {
               <a className="text-sm text-agua underline-offset-2 hover:underline" href={item.links.geo360_goiania} target="_blank" rel="noreferrer">Geo360 Goiânia</a>
               <span className="text-xs text-tinta-3">({item.links.coordenadas})</span>
             </div>
+            {DADOS_DEMONSTRACAO && <p className="mt-1.5 text-xs text-tinta-3">{AVISO_LOCALIZACAO}</p>}
           </div>
         </div>
 

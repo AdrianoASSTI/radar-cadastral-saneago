@@ -10,3 +10,6 @@ dist/
 !services/ai_worker/modelos/*.pt
 .pytest_cache/
 .DS_Store
+# saídas temporárias do Ultralytics (validação/treino)
+runs/
+experiments/runs/

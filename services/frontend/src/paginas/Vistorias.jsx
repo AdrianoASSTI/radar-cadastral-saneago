@@ -2,7 +2,7 @@
 // Cegamento: o fiscal NÃO vê a origem da ordem nem a probabilidade do modelo, para que
 // o laudo não seja influenciado (vale para ordens do Radar, do controle e da amostra).
 import { useCallback, useEffect, useState } from "react";
-import { api, fmt, NOME_CATEGORIA, useSessao } from "../api";
+import { api, AVISO_LOCALIZACAO, DADOS_DEMONSTRACAO, fmt, NOME_CATEGORIA, useSessao } from "../api";
 import { Aviso, Botao, Cabecalho, Campo, Carregando, estiloEntrada, Selo, Vazio } from "../componentes/ui";
 
 const ORIGEM = { RADAR: "Radar", METODO_ATUAL: "Método atual (controle)", AMOSTRA_ALEATORIA: "Amostra aleatória" };
@@ -114,6 +114,7 @@ function FormLaudo({ ordem, aoSalvar }) {
         <h2 className="expandida text-lg font-semibold">{ordem.logradouro}, {ordem.numero}</h2>
         <p className="text-sm text-tinta-2">{ordem.bairro}, matrícula {ordem.matricula}.{" "}
           <a href={mapa} target="_blank" rel="noreferrer" className="text-agua hover:underline">Abrir no mapa</a></p>
+        {DADOS_DEMONSTRACAO && <p className="mt-1 text-xs text-tinta-3">{AVISO_LOCALIZACAO}</p>}
       </div>
       <fieldset>
         <legend className="text-sm font-medium text-tinta-2">O que você encontrou no imóvel?</legend>

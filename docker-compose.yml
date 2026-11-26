@@ -11,14 +11,11 @@
 # Duas redes isolam a borda (navegador -> frontend/api) da camada de dados.
 # O banco, o broker e os workers NÃO ficam expostos na rede de borda.
 #
-# Uso por etapa:
-#   Etapa 1 (agora):  docker compose up -d db rabbitmq seed
-#   Etapa 2:          docker compose up -d --build api
-#                     docker compose --profile ferramentas run --rm baseline
-#   Etapa 3:          docker compose --profile experimentos run --rm experiments python gerar_acervo.py
-#                     docker compose up -d --build collector ai_worker
-#   Etapa 4:          docker compose up -d --build
-#   Experimentos:     docker compose --profile experimentos run --rm experiments
+# Uso (detalhes em docs/05_MANUAL_IMPLANTACAO_E_OPERACAO.md):
+#   Subir tudo:        docker compose up -d --build            → http://localhost:5173
+#   Acervo de fotos:   docker compose --profile experimentos run --rm experiments python gerar_acervo.py
+#   Linha de base:     docker compose --profile ferramentas run --rm baseline
+#   Experimentos:      docker compose --profile experimentos run --rm experiments
 #   Escala horizontal: docker compose up -d --scale ai_worker=2 --scale collector=2
 # =============================================================================
 

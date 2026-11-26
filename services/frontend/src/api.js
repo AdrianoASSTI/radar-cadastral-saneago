@@ -54,6 +54,11 @@ export const useSessao = () => useContext(SessaoContexto);
 // ----------------------------------------------------------------- formatação
 const brl = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
 const brl0 = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 });
+// Dados de demonstração: endereços e coordenadas sintéticos (centroide aproximado do bairro
+// + deslocamento aleatório). Os links de mapa não apontam para o imóvel real. VITE_DADOS_DEMONSTRACAO=0 desliga o aviso.
+export const DADOS_DEMONSTRACAO = import.meta.env.VITE_DADOS_DEMONSTRACAO !== "0";
+export const AVISO_LOCALIZACAO = "Localização aproximada (dados de demonstração): o mapa abre perto do bairro, não no imóvel.";
+
 export const fmt = {
   reais: (v) => (v == null ? "—" : brl.format(v)),
   reais0: (v) => (v == null ? "—" : brl0.format(v)),

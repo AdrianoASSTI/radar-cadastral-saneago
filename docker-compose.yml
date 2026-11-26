@@ -204,7 +204,7 @@ services:
       MODELOS_DIR: /models                       # re-treinos; se vazio, usa os pesos embutidos na imagem
       YOLO_CONF_MIN: ${YOLO_CONF_MIN:-0.35}
       YOLO_CONF_PRIVACIDADE: ${YOLO_CONF_PRIVACIDADE:-0.15}
-      OMP_NUM_THREADS: ${OMP_NUM_THREADS:-2}
+      OMP_NUM_THREADS: ${OMP_NUM_THREADS:-1}
       PREFETCH_COUNT: "1"                        # tarefa CPU-bound: distribuição justa entre réplicas
     volumes:
       - storage_imagens:/data/imagens            # grava SOMENTE imagens já anonimizadas
@@ -226,12 +226,15 @@ services:
     build:
       context: ./services/frontend
       args:
-        VITE_API_URL: ${VITE_API_URL:-http://localhost:8000}
+        # "/api" = mesma origem; o Nginx do contêiner repassa para api:8000 (sem CORS).
+        VITE_API_URL: ${VITE_API_URL:-/api}
+    image: radar-cadastral-frontend:dev
     restart: unless-stopped
     ports:
       - "${FRONTEND_PORT:-5173}:80"
     depends_on:
-      - api
+      api:
+        condition: service_started
     networks: [rede_borda]
 
   # ---------------------------------------------------------------------------
@@ -253,7 +256,7 @@ services:
       YOLO_OFFLINE: "0"                          # permite baixar os pesos-base do COCO ao re-treinar
       MODELOS_DIR: /models
       ACERVO_PATH: /data/acervo
-      OMP_NUM_THREADS: ${OMP_NUM_THREADS:-2}
+      OMP_NUM_THREADS: ${OMP_NUM_THREADS:-1}
     volumes:
       - ./experiments:/app/experiments
       - ./db/seed:/app/db/seed:ro

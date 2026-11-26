@@ -3,7 +3,8 @@
 Relatório do experimento de speedup (lê os lotes etiquetados 'speedup:*' no banco).
 
 Métricas (docs/01, seção Computação Paralela):
-  T_p      makespan do lote com p consumidores (criado_em → concluido_em), média de R repetições
+  T_p      makespan do lote com p consumidores (criado_em → concluido_em), MEDIANA de R repetições
+           (robusta a repetições atípicas, p.ex. pressão de memória); dispersão pelo IQR
   S(p)     = T_seq / T_p           (T_seq: modo SEQUENCIAL na mesma infraestrutura)
   E(p)     = S(p) / p              eficiência
   X(p)     = N / T_p               vazão (UCs/s)
@@ -55,18 +56,21 @@ def main() -> None:
         carga[chave][r["worker_id"]] += 1
 
     seq = grupos.get(("SEQUENCIAL", 1))
-    t_seq = st.mean(l["t"] for l in seq) if seq else None
+    t_seq = st.median(l["t"] for l in seq) if seq else None
     linhas = []
     for (modo, n), ls in sorted(grupos.items(), key=lambda kv: (kv[0][0] != "SEQUENCIAL", kv[0][1])):
         ts = [l["t"] for l in ls]
-        t = st.mean(ts)
+        t = st.median(ts)
+        q1, q3 = (np.percentile(ts, [25, 75]) if len(ts) > 1 else (t, t))
         N = ls[0]["total_ucs"]
         s = t_seq / t if t_seq else None
         kf = ((1 / s - 1 / n) / (1 - 1 / n)) if (s and n > 1) else None
         ws = carga[(modo, n)]
         linhas.append({
-            "modo": modo, "p": n, "repeticoes": len(ts), "ucs": N, "T_medio_s": round(t, 2),
+            "modo": modo, "p": n, "repeticoes": len(ts), "ucs": N, "T_mediana_s": round(t, 2),
+            "T_iqr_s": round(float(q3 - q1), 2), "T_media_s": round(st.mean(ts), 2),
             "T_dp_s": round(st.stdev(ts), 2) if len(ts) > 1 else 0.0,
+            "repeticoes_s": [round(x, 2) for x in ts],
             "speedup": round(s, 3) if s else None, "eficiencia": round(s / n, 3) if s else None,
             "vazao_ucs_s": round(N / t, 3), "karp_flatt": round(kf, 4) if kf is not None else None,
             "latencia_ms_mediana": round(st.median(lat_por[(modo, n)]), 1) if lat_por[(modo, n)] else None,
@@ -89,21 +93,23 @@ def main() -> None:
     RES.mkdir(parents=True, exist_ok=True)
     (RES / "speedup.json").write_text(json.dumps(out, indent=2, ensure_ascii=False))
 
-    cab = ["Modo", "p", "T (s)", "S(p)", "E(p)", "Vazão (UC/s)", "Karp–Flatt", "Latência med. (ms)", "Desequilíbrio"]
+    cab = ["Modo", "p", "T mediana (s) [IQR]", "S(p)", "E(p)", "Vazão (UC/s)", "Karp–Flatt", "Latência med. (ms)", "Desequilíbrio"]
     tab = "| " + " | ".join(cab) + " |\n|" + "---|" * len(cab) + "\n" + "".join(
-        f"| {r['modo']} | {r['p']} | {r['T_medio_s']} ± {r['T_dp_s']} | {r['speedup']} | {r['eficiencia']} | "
+        f"| {r['modo']} | {r['p']} | {r['T_mediana_s']} [{r['T_iqr_s']}] | {r['speedup']} | {r['eficiencia']} | "
         f"{r['vazao_ucs_s']} | {r['karp_flatt'] if r['karp_flatt'] is not None else '—'} | "
         f"{r['latencia_ms_mediana']} | {r['desequilibrio_carga']} |\n" for r in linhas)
-    md = (f"# Speedup — processamento distribuído do lote\n\n{tab}\n"
+    reps = "".join(f"- {r['modo']} p={r['p']}: " + ", ".join(f"{x} s" for x in r["repeticoes_s"]) + "\n" for r in linhas)
+    md = (f"# Speedup — processamento distribuído do lote\n\nS(p) calculado pela mediana dos tempos.\n\n{tab}\n"
+          f"## Todas as repetições\n\n{reps}\n"
           f"Fração serial estimada (Amdahl): **{out['amdahl_fracao_serial']}** → speedup máximo teórico "
           f"**{out['amdahl_speedup_maximo']}×**.\n")
     (RES / "speedup.md").write_text(md)
-    corpo = " \\\\\n".join(f"{r['modo']} & {r['p']} & {r['T_medio_s']} $\\pm$ {r['T_dp_s']} & {r['speedup']} & "
+    corpo = " \\\\\n".join(f"{r['modo']} & {r['p']} & {r['T_mediana_s']} [{r['T_iqr_s']}] & {r['speedup']} & "
                            f"{r['eficiencia']} & {r['vazao_ucs_s']} & {r['karp_flatt'] if r['karp_flatt'] is not None else '--'}"
                            for r in linhas)
     (RES / "speedup.tex").write_text(
         "\\begin{table}[ht]\n\\centering\n\\caption{Speedup do processamento distribuído (coleta + IA).}\n"
-        "\\label{tab:speedup}\n\\begin{tabular}{lcccccc}\n\\hline\nModo & $p$ & $T_p$ (s) & $S(p)$ & $E(p)$ & "
+        "\\label{tab:speedup}\n\\begin{tabular}{lcccccc}\n\\hline\nModo & $p$ & $\\tilde T_p$ (s) [IQR] & $S(p)$ & $E(p)$ & "
         f"Vazão (UC/s) & $e_{{KF}}$ \\\\\n\\hline\n{corpo} \\\\\n\\hline\n\\end{{tabular}}\n\\end{{table}}\n")
 
     import matplotlib

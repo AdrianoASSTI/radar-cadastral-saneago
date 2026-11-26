@@ -31,7 +31,7 @@ async def alertas(status: str | None = None, limite: int = Query(100, le=1000), 
     cur = await conn.execute("""
         SELECT a.id, a.uc_id, uc.matricula, uc.logradouro, uc.numero, b.nome AS bairro, b.faixa_renda::text,
                uc.categoria_atual::text, a.criterio::text, a.status::text, a.evidencia,
-               a.criado_em, a.atualizado_em, a.responsavel, a.observacao
+               a.criado_em, a.atualizado_em, a.responsavel, a.observacao, a.aplicado_em
         FROM social.alerta_tarifa_social a
         JOIN cadastro.unidade_consumidora uc ON uc.id = a.uc_id
         JOIN cadastro.bairro b ON b.id = uc.bairro_id

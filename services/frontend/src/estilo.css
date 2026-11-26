@@ -1,0 +1,50 @@
+@import "@fontsource-variable/archivo/wdth.css";
+@import "tailwindcss";
+
+/*
+  Radar Cadastral — tokens
+  Fundo mineral frio (papel técnico), tinta ardósia, azul-petróleo da água tratada.
+  Estados usam a paleta de status reservada; gráficos usam a paleta categórica validada.
+*/
+@theme {
+  --font-sans: "Archivo Variable", "Segoe UI", system-ui, sans-serif;
+
+  --color-fundo: #eef2f3;
+  --color-superficie: #ffffff;
+  --color-linha: #d5dee1;
+  --color-linha-forte: #b4c3c8;
+  --color-tinta: #17252b;
+  --color-tinta-2: #4a5c63;
+  --color-tinta-3: #6f8188;
+  --color-agua: #0b6e78;
+  --color-agua-escura: #08525a;
+  --color-agua-clara: #dceef0;
+
+  /* status (reservados; sempre com ícone + rótulo) */
+  --color-bom: #0a7a1c;
+  --color-bom-fundo: #e3f4e5;
+  --color-atencao: #8a5a00;
+  --color-atencao-fundo: #fdf1d6;
+  --color-critico: #c0292a;
+  --color-critico-fundo: #fbe5e5;
+
+  /* séries (paleta categórica validada — slots 1 e 2) */
+  --color-serie-1: #257de0;
+  --color-serie-2: #f47230;
+}
+
+html { background: var(--color-fundo); color: var(--color-tinta); }
+body { font-feature-settings: "tnum" 1, "ss01" 1; -webkit-font-smoothing: antialiased; }
+
+/* larguras do eixo wdth da Archivo: condensada para números de destaque */
+.condensada { font-stretch: 72%; }
+.expandida { font-stretch: 112%; }
+
+:focus-visible { outline: 2px solid var(--color-agua); outline-offset: 2px; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+
+/* anotação de levantamento: contorno tracejado com marcas de canto */
+.anotacao { stroke-dasharray: 6 4; }

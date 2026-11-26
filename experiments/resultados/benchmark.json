@@ -1,5 +1,5 @@
 {
-  "gerado_em": "2026-11-26T03:02:24+00:00",
+  "gerado_em": "2026-11-26T02:02:12+00:00",
   "config": {
     "n": 2000,
     "n_teste": 1000,
@@ -24,11 +24,11 @@
     "data_referencia": "2026-11-25"
   },
   "ambiente": {
-    "python": "3.12.16",
-    "plataforma": "Linux-6.18.33.2-microsoft-standard-WSL2-x86_64-with-glibc2.41",
+    "python": "3.13.18",
+    "plataforma": "Linux-6.18.44-fc-v880-x86_64-with-glibc2.39",
     "xgboost": "3.4.1",
-    "numpy": "2.5.4",
-    "processador": ""
+    "numpy": "2.5.3",
+    "processador": "x86_64"
   },
   "prevalencia": {
     "W": 0.132,
@@ -1484,6 +1484,6 @@
     "tempo_geracao_dados_s": 7.6,
     "tempo_treino_s": 1471.8
   },
-  "tempo_inferencia_s_por_imagem": 0.0322,
-  "tempo_total_s": 168.2
+  "tempo_inferencia_s_por_imagem": 0.0408,
+  "tempo_total_s": 175.0
 }

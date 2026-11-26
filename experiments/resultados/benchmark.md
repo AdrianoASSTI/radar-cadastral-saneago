@@ -1,6 +1,6 @@
 # Resultados do benchmark — Radar Cadastral SANEAGO
 
-Gerado em 2026-11-26T03:02:24+00:00 · semente 20261125 · W = 2000 UCs (CV 5 folds) ·
+Gerado em 2026-11-26T02:02:12+00:00 · semente 20261125 · W = 2000 UCs (CV 5 folds) ·
 T = 1000 UCs (teste fora da amostra) · k = 10% das UCs residenciais · IC 95% por bootstrap (B = 1000).
 
 ## Tabela 1 — Validação cruzada em W (predições fora do fold)
@@ -60,7 +60,7 @@ Acurácia da categoria sugerida entre os irregulares (teste): 0.8487.
 Prevalência de irregulares: W = 0.132 · T = 0.119.
 
 mAP@0,5 = 0.9963 · mAP@0,5:0,95 = 0.94 ·
-tempo médio de inferência = 32.2 ms/imagem (CPU, 1 processo).
+tempo médio de inferência = 40.8 ms/imagem (CPU, 1 processo).
 
 ## Importância dos atributos (ganho médio, modelo proposto)
 

@@ -1,0 +1,14 @@
+\begin{table}[ht]
+\centering
+\caption{Speedup do processamento distribuído (coleta + IA).}
+\label{tab:speedup}
+\begin{tabular}{lcccccc}
+\hline
+Modo & $p$ & $T_p$ (s) & $S(p)$ & $E(p)$ & Vazão (UC/s) & $e_{KF}$ \\
+\hline
+SEQUENCIAL & 1 & 26.2 $\pm$ 1.21 & 1.0 & 1.0 & 11.45 & -- \\
+PARALELO & 1 & 26.25 $\pm$ 0.29 & 0.998 & 0.998 & 11.43 & -- \\
+PARALELO & 2 & 17.04 $\pm$ 3.01 & 1.538 & 0.769 & 17.61 & 0.3004 \\
+\hline
+\end{tabular}
+\end{table}

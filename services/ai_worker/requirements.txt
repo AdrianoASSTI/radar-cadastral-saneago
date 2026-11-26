@@ -1,0 +1,12 @@
+# torch/torchvision (CPU) são instalados antes, pelo índice https://download.pytorch.org/whl/cpu (ver Dockerfile)
+ultralytics==8.4.219
+xgboost==3.4.1
+scikit-learn==1.9.1
+# OpenCV 4.10: as rodas 5.x não trazem mais os XML do detector Haar (2ª camada da anonimização).
+# As duas variantes na MESMA versão evitam que a dependência do Ultralytics sobrescreva o cv2.
+opencv-python==4.10.0.84
+opencv-python-headless==4.10.0.84
+psycopg[binary]==3.2.3
+psycopg-pool==3.2.4
+aio-pika==9.5.3
+pydantic==2.10.3

@@ -19,10 +19,11 @@ FastAPI + PostgreSQL/PostGIS + RabbitMQ. Documentação interativa em **http://l
 | POST | `/auth/login` | token JWT (form `username`/`password`) |
 | GET | `/saude` | banco, banco social, RabbitMQ e mensagens por fila |
 | GET | `/ucs`, `/ucs/bairros`, `/ucs/{id}` | consulta; detalhe com consumo, CNPJ/alvará a 30 m, zona, última análise, detecções, links Street View/Geo360, simulação tarifária |
+| GET | `/ucs/imagens/{imagem_id}` | imagem de fachada JÁ anonimizada (com token; 410 se expurgada) |
 | POST | `/ucs/importacao` | ingestão em lote (idempotente por matrícula; titular pseudonimizado) |
 | GET | `/tarifas/tabela`, `/tarifas/simular` | estrutura SANEAGO 2026 e fatura em todas as categorias |
 | POST | `/tarifas/ganho-esperado` | E[G] e score para probabilidades informadas |
-| POST/GET | `/lotes`, `/lotes/{id}` | cria lote e publica 1 mensagem por UC (`PARALELO` ou `SEQUENCIAL`); progresso e vazão |
+| POST/GET | `/lotes`, `/lotes/{id}` | cria lote e publica 1 mensagem por UC (`PARALELO` ou `SEQUENCIAL`, `etiqueta` opcional); progresso e vazão |
 | GET | `/fila` | fila priorizada por Ganho Esperado (filtros de probabilidade, faixa de renda, bairro) |
 | POST | `/fila/ordens` | ordens RADAR a partir do topo da fila |
 | POST | `/ordens/controle` | grupo controle (`METODO_ATUAL`) ou `AMOSTRA_ALEATORIA` (recall), sorteio reprodutível |

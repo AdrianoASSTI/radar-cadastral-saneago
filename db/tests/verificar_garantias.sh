@@ -71,7 +71,10 @@ echo "== G2: segregação do CadÚnico e do gabarito =="
 espera_erro "API de fiscalização não lê CadÚnico" usr_api "SELECT count(*) FROM social.familia_cadunico" "permission denied"
 espera_erro "Worker de IA não lê CadÚnico"        usr_ia  "SELECT count(*) FROM social.familia_cadunico" "permission denied"
 espera_erro "Worker de IA não lê o gabarito"      usr_ia  "SELECT count(*) FROM experimento.gabarito_sintetico" "permission denied"
-espera_valor "Módulo social lê CadÚnico (5 famílias)" usr_api_social "SELECT count(*) FROM social.familia_cadunico" "5"
+espera_erro "Coletor não lê CadÚnico"               usr_coletor "SELECT count(*) FROM social.familia_cadunico" "permission denied"
+espera_erro "Coletor não altera a categoria da UC"  usr_coletor \
+  "UPDATE cadastro.unidade_consumidora SET categoria_atual='COMERCIAL_I' WHERE matricula='GYN00000002'" "permission denied"
+espera_valor "Módulo social lê CadÚnico" usr_api_social "SELECT count(*) > 0 FROM social.familia_cadunico" "t"
 
 echo "== G3/G4: imagens =="
 espera_erro "Imagem não anonimizada rejeitada" usr_ia \

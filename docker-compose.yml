@@ -15,9 +15,11 @@
 #   Etapa 1 (agora):  docker compose up -d db rabbitmq seed
 #   Etapa 2:          docker compose up -d --build api
 #                     docker compose --profile ferramentas run --rm baseline
-#   Etapas 3–4:       docker compose up -d --build
+#   Etapa 3:          docker compose --profile experimentos run --rm experiments python gerar_acervo.py
+#                     docker compose up -d --build collector ai_worker
+#   Etapa 4:          docker compose up -d --build
 #   Experimentos:     docker compose --profile experimentos run --rm experiments
-#   Escala horizontal: docker compose up -d --scale ai_worker=8 --scale collector=4
+#   Escala horizontal: docker compose up -d --scale ai_worker=2 --scale collector=2
 # =============================================================================
 
 name: radar-cadastral
@@ -156,57 +158,65 @@ services:
     networks: [rede_dados]
 
   # ---------------------------------------------------------------------------
-  # Worker de coleta e cruzamento (Geo360 / Mapillary / Leituristas + bases públicas) — Etapa 3
+  # Worker de coleta e cruzamento (Leituristas / Mapillary / Geo360 + bases públicas) — Etapa 3
   # ---------------------------------------------------------------------------
   collector:
-    build: ./services/collector
+    build:
+      context: ./services
+      dockerfile: collector/Dockerfile
     restart: unless-stopped
     environment:
-      <<: [*amqp-env, *storage-env]
+      <<: *amqp-env
       DATABASE_URL: postgresql://usr_coletor:${DB_PASS_COLETOR:-coletor_dev}@db:5432/${POSTGRES_DB:-radar}
-      FONTES_IMAGEM: ${FONTES_IMAGEM:-leiturista,mapillary,geo360}   # Street View é proibido aqui
+      FONTES_IMAGEM: ${FONTES_IMAGEM:-leiturista,mapillary,geo360}   # Street View é PROIBIDO aqui
       MODO_FONTES: ${MODO_FONTES:-simulado}                           # simulado | producao
       MAPILLARY_TOKEN: ${MAPILLARY_TOKEN:-}
-      GEO360_BASE_URL: ${GEO360_BASE_URL:-https://portal-goiania.geo360.com.br/}
+      GEO360_URL_TEMPLATE: ${GEO360_URL_TEMPLATE:-}
+      ACERVO_PATH: /data/acervo
+      QUARENTENA_PATH: /data/quarentena
+      PREFETCH_COUNT: ${PREFETCH_COLETOR:-4}
     volumes:
-      - storage_imagens:/data/imagens:ro
+      - acervo_fontes:/data/acervo:ro            # fotos dos leituristas (simuladas no MVP)
       - quarentena_imagens:/data/quarentena      # imagem bruta só em RAM, antes do blur
     deploy:
-      replicas: ${COLLECTOR_REPLICAS:-2}
+      replicas: ${COLLECTOR_REPLICAS:-1}
     depends_on:
+      db:
+        condition: service_healthy
       rabbitmq:
         condition: service_healthy
-      seed:
-        condition: service_completed_successfully
     networks: [rede_dados]
 
   # ---------------------------------------------------------------------------
-  # Worker de IA: YOLOv11 + blur LGPD + modelo preditivo + XAI — Etapa 3
+  # Worker de IA: YOLOv11n + anonimização LGPD + XGBoost + TreeSHAP + Ganho Esperado — Etapa 3
   # ---------------------------------------------------------------------------
   ai_worker:
-    build: ./services/ai_worker
+    build:
+      context: ./services
+      dockerfile: ai_worker/Dockerfile
+    image: radar-cadastral-ia:dev
     restart: unless-stopped
     environment:
       <<: [*amqp-env, *storage-env]
       DATABASE_URL: postgresql://usr_ia:${DB_PASS_IA:-ia_dev}@db:5432/${POSTGRES_DB:-radar}
-      # Usado apenas pelo avaliador de elegibilidade à Tarifa Social.
+      # Conexão separada, usada só para o módulo Tarifa Social ao fechar um lote.
       DATABASE_URL_SOCIAL: postgresql://usr_ia_social:${DB_PASS_IA_SOCIAL:-ia_social_dev}@db:5432/${POSTGRES_DB:-radar}
-      YOLO_WEIGHTS: ${YOLO_WEIGHTS:-/models/yolo11n-fachada.pt}
+      MODELOS_DIR: /models                       # re-treinos; se vazio, usa os pesos embutidos na imagem
       YOLO_CONF_MIN: ${YOLO_CONF_MIN:-0.35}
-      YOLO_DEVICE: ${YOLO_DEVICE:-cpu}          # cpu | cuda:0
-      MODELO_VERSAO: ${MODELO_VERSAO:-radar-v0.1.0}
+      YOLO_CONF_PRIVACIDADE: ${YOLO_CONF_PRIVACIDADE:-0.15}
       OMP_NUM_THREADS: ${OMP_NUM_THREADS:-2}
+      PREFETCH_COUNT: "1"                        # tarefa CPU-bound: distribuição justa entre réplicas
     volumes:
-      - storage_imagens:/data/imagens           # grava SOMENTE imagens já anonimizadas
+      - storage_imagens:/data/imagens            # grava SOMENTE imagens já anonimizadas
       - quarentena_imagens:/data/quarentena
       - modelos:/models
     deploy:
-      replicas: ${AI_WORKER_REPLICAS:-2}
+      replicas: ${AI_WORKER_REPLICAS:-1}
     depends_on:
+      db:
+        condition: service_healthy
       rabbitmq:
         condition: service_healthy
-      seed:
-        condition: service_completed_successfully
     networks: [rede_dados]
 
   # ---------------------------------------------------------------------------
@@ -225,22 +235,32 @@ services:
     networks: [rede_borda]
 
   # ---------------------------------------------------------------------------
-  # Benchmark e experimentos (sob demanda; não sobe com `up`)
+  # Experimentos (sob demanda): acervo simulado, benchmark, treino, relatório de speedup.
+  # Usa a MESMA imagem do worker de IA (mesmas bibliotecas e pesos).
+  #   docker compose --profile experimentos run --rm experiments python gerar_acervo.py
+  #   docker compose --profile experimentos run --rm experiments python benchmark.py
   # ---------------------------------------------------------------------------
   experiments:
     build:
-      context: .
-      dockerfile: experiments/Dockerfile
+      context: ./services
+      dockerfile: ai_worker/Dockerfile
+    image: radar-cadastral-ia:dev
     profiles: ["experimentos"]
+    working_dir: /app/experiments
     environment:
-      <<: *amqp-env
       DATABASE_URL: postgresql://usr_experimento:${DB_PASS_EXPERIMENTO:-experimento_dev}@db:5432/${POSTGRES_DB:-radar}
-      EXPERIMENTO_N_UCS: ${EXPERIMENTO_N_UCS:-5000}
-      EXPERIMENTO_FOLDS: ${EXPERIMENTO_FOLDS:-5}
-      EXPERIMENTO_WORKERS: ${EXPERIMENTO_WORKERS:-1,2,4,8}
+      PYTHONPATH: /app
+      YOLO_OFFLINE: "0"                          # permite baixar os pesos-base do COCO ao re-treinar
+      MODELOS_DIR: /models
+      ACERVO_PATH: /data/acervo
+      OMP_NUM_THREADS: ${OMP_NUM_THREADS:-2}
     volumes:
-      - ./experiments/resultados:/app/experiments/resultados
+      - ./experiments:/app/experiments
+      - ./db/seed:/app/db/seed:ro
       - modelos:/models
+      - acervo_fontes:/data/acervo
+    command: ["python", "benchmark.py", "--n", "${EXPERIMENTO_N_UCS:-2000}", "--n-teste", "${EXPERIMENTO_N_TESTE:-1000}",
+              "--folds", "${EXPERIMENTO_FOLDS:-5}"]
     depends_on:
       db:
         condition: service_healthy
@@ -256,7 +276,8 @@ volumes:
       type: tmpfs
       device: tmpfs
       o: "size=512m,mode=1777"
-  modelos:             # pesos do YOLO e artefatos do modelo preditivo
+  modelos:             # re-treinos do YOLO e do classificador (sobrepõem os pesos embutidos)
+  acervo_fontes:       # "fotos dos leituristas" simuladas (gerar_acervo.py) — lidas pelo coletor
 
 networks:
   rede_dados:          # banco, broker, workers e API

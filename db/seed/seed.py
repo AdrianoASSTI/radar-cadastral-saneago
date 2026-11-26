@@ -185,10 +185,30 @@ def especificar_ucs(rng: random.Random, n_extra: int) -> list[dict]:
                 spec["cnpj"] = dict(razao=f"{nome_ativ} {n:05d}", cnae=cnae, cnae_desc=desc, porte=porte,
                                     situacao="ATIVA",
                                     abertura=(date(2015, 1, 1) + timedelta(days=rng.randint(0, 4000))).isoformat())
-        # Elementos visuais: cada elemento do cenário aparece com prob. 0,8
+        # Alvará de funcionamento: frequente nos estabelecimentos regulares, raro nos não declarados
+        p_alv = {"COM_OK": .85, "COM_II_OK": .7, "IND_OK": .9, "RES_COM_I": .2, "RES_IND": .3}.get(cenario, 0)
+        if rng.random() < p_alv:
+            emissao = date(2024, 1, 1) + timedelta(days=rng.randint(0, 900))
+            spec["alvara"] = dict(atividade=spec.get("atividade", "Comércio"), emissao=emissao.isoformat(),
+                                  validade=(emissao + timedelta(days=365)).isoformat())
+        # Elementos visuais: cada elemento do cenário aparece com prob. ~0,8
         # (oclusão, ângulo, placa removida) — gera falsos negativos realistas.
         base_vis = ref.CENARIOS[cenario]["visuais"]
-        spec["visuais"] = [v for v in base_vis if rng.random() < 0.8]
+        p_vis = ref.PROB_ELEMENTO_VISIVEL.get(cenario, ref.PROB_ELEMENTO_VISIVEL_PADRAO)
+        spec["visuais"] = [v for v in base_vis if rng.random() < p_vis]
+        # Ruído realista: séries alternativas, distratores visuais e CNPJ baixado em residências
+        for prob, alt in ref.VARIACOES_CONSUMO.get(cenario, []):
+            if rng.random() < prob:
+                spec["consumo"] = alt
+                break
+        for prob, elems in ref.DISTRATORES_VISUAIS.get(cenario, []):
+            if rng.random() < prob:
+                spec["visuais"] = sorted(set(spec["visuais"]) | set(elems))
+        if cenario in ("RES_OK", "CONSUMO_ALTO_RES") and rng.random() < ref.PROB_CNPJ_BAIXADO_RES:
+            nome_ativ, cnae, desc = rng.choice(ref.ATIVIDADES_POR_CENARIO["RES_COM_I"])
+            spec["cnpj"] = dict(razao=f"{nome_ativ} {n:05d} (encerrada)", cnae=cnae, cnae_desc=desc, porte="ME",
+                                situacao="BAIXADA",
+                                abertura=(date(2012, 1, 1) + timedelta(days=rng.randint(0, 2500))).isoformat())
         # CadÚnico: famílias elegíveis nos cenários sociais; algumas inelegíveis em RES_OK
         if cenario in ("SOCIAL_ELEGIVEL", "SOCIAL_OK"):
             bpc = rng.random() < 0.25

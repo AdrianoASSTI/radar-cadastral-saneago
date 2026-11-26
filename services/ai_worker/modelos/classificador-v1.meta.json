@@ -1,0 +1,60 @@
+{
+  "versao": "xgb-cbv-v1",
+  "atributos": [
+    "c_volume_ref",
+    "c_volume_inicial",
+    "c_razao_regime",
+    "c_salto_max",
+    "c_cv_12m",
+    "c_tendencia_12m",
+    "c_frac_estimadas",
+    "b_cnpj_ativo_nao_mei",
+    "b_cnpj_ativo_mei",
+    "b_cnpj_inativo",
+    "b_cnae_alimentacao_veiculos",
+    "b_alvara_vigente",
+    "b_alvara_vencido",
+    "b_zona_misto",
+    "b_zona_comercial",
+    "b_zona_industrial",
+    "v_imagem_disponivel",
+    "v_imagem_desatualizada",
+    "v_n_deteccoes",
+    "v_placa_comercial",
+    "v_letreiro",
+    "v_vitrine",
+    "v_banner",
+    "v_portao_industrial",
+    "v_doca_carga",
+    "v_estacionamento_clientes"
+  ],
+  "rotulos": [
+    "RESIDENCIAL",
+    "COMERCIAL_I",
+    "COMERCIAL_II",
+    "INDUSTRIAL"
+  ],
+  "grupos": "cbv",
+  "treinado_em": "2026-11-26T02:02:12+00:00",
+  "n_treino": 2000,
+  "semente": 20261125,
+  "parametros": {
+    "objective": "multi:softprob",
+    "num_class": 4,
+    "max_depth": 4,
+    "eta": 0.08,
+    "subsample": 0.9,
+    "colsample_bytree": 0.9,
+    "min_child_weight": 2,
+    "lambda": 1.0,
+    "eval_metric": "mlogloss",
+    "tree_method": "hist",
+    "nthread": 2,
+    "n_arvores": 300
+  },
+  "metricas_teste": {
+    "precisao_at_k": 0.7526,
+    "roc_auc": 0.9821,
+    "auc_pr": 0.9334
+  }
+}

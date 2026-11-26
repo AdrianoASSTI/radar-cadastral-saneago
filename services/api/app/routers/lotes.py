@@ -71,7 +71,8 @@ async def listar(limite: int = Query(50, le=500), _: Usuario = Depends(exigir(*L
         SELECT id, criado_em, iniciado_em, concluido_em, status::text, modo::text, n_workers,
                total_ucs, processadas, falhas, solicitado_por,
                round(100.0 * (processadas + falhas) / nullif(total_ucs, 0), 1) AS progresso_pct,
-               extract(epoch FROM (coalesce(concluido_em, now()) - iniciado_em)) AS duracao_s
+               extract(epoch FROM (coalesce(concluido_em, now()) - iniciado_em)) AS duracao_s,
+               parametros->>'etiqueta' AS etiqueta
         FROM analise.lote_processamento ORDER BY criado_em DESC LIMIT %s""", (limite,))
     return await cur.fetchall()
 

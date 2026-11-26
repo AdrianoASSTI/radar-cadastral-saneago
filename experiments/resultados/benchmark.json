@@ -1,0 +1,1489 @@
+{
+  "gerado_em": "2026-11-26T03:02:24+00:00",
+  "config": {
+    "n": 2000,
+    "n_teste": 1000,
+    "folds": 5,
+    "semente": 20261125,
+    "fracao_k": 0.1,
+    "bootstrap": 1000,
+    "xgboost": {
+      "objective": "multi:softprob",
+      "num_class": 4,
+      "max_depth": 4,
+      "eta": 0.08,
+      "subsample": 0.9,
+      "colsample_bytree": 0.9,
+      "min_child_weight": 2,
+      "lambda": 1.0,
+      "eval_metric": "mlogloss",
+      "tree_method": "hist",
+      "nthread": 2,
+      "n_arvores": 300
+    },
+    "data_referencia": "2026-11-25"
+  },
+  "ambiente": {
+    "python": "3.12.16",
+    "plataforma": "Linux-6.18.33.2-microsoft-standard-WSL2-x86_64-with-glibc2.41",
+    "xgboost": "3.4.1",
+    "numpy": "2.5.4",
+    "processador": ""
+  },
+  "prevalencia": {
+    "W": 0.132,
+    "T": 0.119
+  },
+  "cv": {
+    "BASELINE": {
+      "n": 1925,
+      "positivos": 264,
+      "prevalencia": 0.1371,
+      "k": 193,
+      "precisao_at_k": 0.6477,
+      "recall_at_k": 0.4735,
+      "ganho_capturado_at_k": 0.7314,
+      "roc_auc": 0.823,
+      "auc_pr": 0.6832,
+      "f1_limiar": 0.5,
+      "precisao_limiar": 1.0,
+      "recall_limiar": 0.3333,
+      "brier": 0.0727,
+      "matriz_confusao": {
+        "tp": 88,
+        "fp": 0,
+        "fn": 176,
+        "tn": 1661
+      },
+      "limiar": 0.5,
+      "fracao_k": 0.1,
+      "equidade": {
+        "por_faixa": {
+          "ALTA": {
+            "ucs": 388,
+            "irregulares": 52,
+            "fpr": 0.0,
+            "tpr": 0.5,
+            "fdr_top_k": 0.4068,
+            "indicadas_top_k": 59,
+            "taxa_indicacao": 0.1521
+          },
+          "MEDIA_ALTA": {
+            "ucs": 269,
+            "irregulares": 38,
+            "fpr": 0.0,
+            "tpr": 0.3947,
+            "fdr_top_k": 0.3333,
+            "indicadas_top_k": 27,
+            "taxa_indicacao": 0.1004
+          },
+          "MEDIA": {
+            "ucs": 624,
+            "irregulares": 80,
+            "fpr": 0.0,
+            "tpr": 0.3125,
+            "fdr_top_k": 0.3667,
+            "indicadas_top_k": 60,
+            "taxa_indicacao": 0.0962
+          },
+          "BAIXA": {
+            "ucs": 644,
+            "irregulares": 94,
+            "fpr": 0.0,
+            "tpr": 0.234,
+            "fdr_top_k": 0.2766,
+            "indicadas_top_k": 47,
+            "taxa_indicacao": 0.073
+          }
+        },
+        "razao_fpr": null,
+        "razao_fdr_top_k": 1.471,
+        "razao_tpr": 2.137,
+        "limite_I5": 1.25,
+        "k": 193
+      }
+    },
+    "XGB-C": {
+      "n": 1925,
+      "positivos": 264,
+      "prevalencia": 0.1371,
+      "k": 193,
+      "precisao_at_k": 0.6943,
+      "recall_at_k": 0.5076,
+      "ganho_capturado_at_k": 0.7696,
+      "roc_auc": 0.95,
+      "auc_pr": 0.7919,
+      "f1_limiar": 0.6842,
+      "precisao_limiar": 0.6373,
+      "recall_limiar": 0.7386,
+      "brier": 0.0653,
+      "matriz_confusao": {
+        "tp": 195,
+        "fp": 111,
+        "fn": 69,
+        "tn": 1550
+      },
+      "limiar": 0.5,
+      "fracao_k": 0.1,
+      "equidade": {
+        "por_faixa": {
+          "ALTA": {
+            "ucs": 388,
+            "irregulares": 52,
+            "fpr": 0.0625,
+            "tpr": 0.8462,
+            "fdr_top_k": 0.36,
+            "indicadas_top_k": 50,
+            "taxa_indicacao": 0.1289
+          },
+          "MEDIA_ALTA": {
+            "ucs": 269,
+            "irregulares": 38,
+            "fpr": 0.0693,
+            "tpr": 0.8158,
+            "fdr_top_k": 0.3793,
+            "indicadas_top_k": 29,
+            "taxa_indicacao": 0.1078
+          },
+          "MEDIA": {
+            "ucs": 624,
+            "irregulares": 80,
+            "fpr": 0.0625,
+            "tpr": 0.75,
+            "fdr_top_k": 0.3279,
+            "indicadas_top_k": 61,
+            "taxa_indicacao": 0.0978
+          },
+          "BAIXA": {
+            "ucs": 644,
+            "irregulares": 94,
+            "fpr": 0.0727,
+            "tpr": 0.6383,
+            "fdr_top_k": 0.1887,
+            "indicadas_top_k": 53,
+            "taxa_indicacao": 0.0823
+          }
+        },
+        "razao_fpr": 1.163,
+        "razao_fdr_top_k": 2.01,
+        "razao_tpr": 1.326,
+        "limite_I5": 1.25,
+        "k": 193
+      }
+    },
+    "XGB-CB": {
+      "n": 1925,
+      "positivos": 264,
+      "prevalencia": 0.1371,
+      "k": 193,
+      "precisao_at_k": 0.7824,
+      "recall_at_k": 0.572,
+      "ganho_capturado_at_k": 0.8447,
+      "roc_auc": 0.9687,
+      "auc_pr": 0.89,
+      "f1_limiar": 0.7937,
+      "precisao_limiar": 0.8333,
+      "recall_limiar": 0.7576,
+      "brier": 0.0414,
+      "matriz_confusao": {
+        "tp": 200,
+        "fp": 40,
+        "fn": 64,
+        "tn": 1621
+      },
+      "limiar": 0.5,
+      "fracao_k": 0.1,
+      "equidade": {
+        "por_faixa": {
+          "ALTA": {
+            "ucs": 388,
+            "irregulares": 52,
+            "fpr": 0.0089,
+            "tpr": 0.8269,
+            "fdr_top_k": 0.2326,
+            "indicadas_top_k": 43,
+            "taxa_indicacao": 0.1108
+          },
+          "MEDIA_ALTA": {
+            "ucs": 269,
+            "irregulares": 38,
+            "fpr": 0.0216,
+            "tpr": 0.8421,
+            "fdr_top_k": 0.25,
+            "indicadas_top_k": 28,
+            "taxa_indicacao": 0.1041
+          },
+          "MEDIA": {
+            "ucs": 624,
+            "irregulares": 80,
+            "fpr": 0.0202,
+            "tpr": 0.7625,
+            "fdr_top_k": 0.1897,
+            "indicadas_top_k": 58,
+            "taxa_indicacao": 0.0929
+          },
+          "BAIXA": {
+            "ucs": 644,
+            "irregulares": 94,
+            "fpr": 0.0382,
+            "tpr": 0.6809,
+            "fdr_top_k": 0.2188,
+            "indicadas_top_k": 64,
+            "taxa_indicacao": 0.0994
+          }
+        },
+        "razao_fpr": 4.292,
+        "razao_fdr_top_k": 1.318,
+        "razao_tpr": 1.237,
+        "limite_I5": 1.25,
+        "k": 193
+      }
+    },
+    "XGB-V": {
+      "n": 1925,
+      "positivos": 264,
+      "prevalencia": 0.1371,
+      "k": 193,
+      "precisao_at_k": 0.7254,
+      "recall_at_k": 0.5303,
+      "ganho_capturado_at_k": 0.7896,
+      "roc_auc": 0.8917,
+      "auc_pr": 0.7737,
+      "f1_limiar": 0.6741,
+      "precisao_limiar": 0.663,
+      "recall_limiar": 0.6856,
+      "brier": 0.0693,
+      "matriz_confusao": {
+        "tp": 181,
+        "fp": 92,
+        "fn": 83,
+        "tn": 1569
+      },
+      "limiar": 0.5,
+      "fracao_k": 0.1,
+      "equidade": {
+        "por_faixa": {
+          "ALTA": {
+            "ucs": 388,
+            "irregulares": 52,
+            "fpr": 0.0595,
+            "tpr": 0.7692,
+            "fdr_top_k": 0.2444,
+            "indicadas_top_k": 45,
+            "taxa_indicacao": 0.116
+          },
+          "MEDIA_ALTA": {
+            "ucs": 269,
+            "irregulares": 38,
+            "fpr": 0.0736,
+            "tpr": 0.7632,
+            "fdr_top_k": 0.4242,
+            "indicadas_top_k": 33,
+            "taxa_indicacao": 0.1227
+          },
+          "MEDIA": {
+            "ucs": 624,
+            "irregulares": 80,
+            "fpr": 0.0533,
+            "tpr": 0.65,
+            "fdr_top_k": 0.2807,
+            "indicadas_top_k": 57,
+            "taxa_indicacao": 0.0913
+          },
+          "BAIXA": {
+            "ucs": 644,
+            "irregulares": 94,
+            "fpr": 0.0473,
+            "tpr": 0.6383,
+            "fdr_top_k": 0.2069,
+            "indicadas_top_k": 58,
+            "taxa_indicacao": 0.0901
+          }
+        },
+        "razao_fpr": 1.556,
+        "razao_fdr_top_k": 2.05,
+        "razao_tpr": 1.205,
+        "limite_I5": 1.25,
+        "k": 193
+      }
+    },
+    "XGB-CBV": {
+      "n": 1925,
+      "positivos": 264,
+      "prevalencia": 0.1371,
+      "k": 193,
+      "precisao_at_k": 0.8549,
+      "recall_at_k": 0.625,
+      "ganho_capturado_at_k": 0.9099,
+      "roc_auc": 0.9898,
+      "auc_pr": 0.9564,
+      "f1_limiar": 0.8906,
+      "precisao_limiar": 0.9027,
+      "recall_limiar": 0.8788,
+      "brier": 0.0237,
+      "matriz_confusao": {
+        "tp": 232,
+        "fp": 25,
+        "fn": 32,
+        "tn": 1636
+      },
+      "limiar": 0.5,
+      "fracao_k": 0.1,
+      "equidade": {
+        "por_faixa": {
+          "ALTA": {
+            "ucs": 388,
+            "irregulares": 52,
+            "fpr": 0.006,
+            "tpr": 0.8654,
+            "fdr_top_k": 0.0976,
+            "indicadas_top_k": 41,
+            "taxa_indicacao": 0.1057
+          },
+          "MEDIA_ALTA": {
+            "ucs": 269,
+            "irregulares": 38,
+            "fpr": 0.0087,
+            "tpr": 0.9474,
+            "fdr_top_k": 0.2222,
+            "indicadas_top_k": 27,
+            "taxa_indicacao": 0.1004
+          },
+          "MEDIA": {
+            "ucs": 624,
+            "irregulares": 80,
+            "fpr": 0.0202,
+            "tpr": 0.9,
+            "fdr_top_k": 0.1724,
+            "indicadas_top_k": 58,
+            "taxa_indicacao": 0.0929
+          },
+          "BAIXA": {
+            "ucs": 644,
+            "irregulares": 94,
+            "fpr": 0.0182,
+            "tpr": 0.8404,
+            "fdr_top_k": 0.1194,
+            "indicadas_top_k": 67,
+            "taxa_indicacao": 0.104
+          }
+        },
+        "razao_fpr": 3.367,
+        "razao_fdr_top_k": 2.277,
+        "razao_tpr": 1.127,
+        "limite_I5": 1.25,
+        "k": 193
+      }
+    }
+  },
+  "teste": {
+    "BASELINE": {
+      "n": 967,
+      "positivos": 119,
+      "prevalencia": 0.1231,
+      "k": 97,
+      "precisao_at_k": 0.5567,
+      "recall_at_k": 0.4538,
+      "ganho_capturado_at_k": 0.754,
+      "roc_auc": 0.8024,
+      "auc_pr": 0.6427,
+      "f1_limiar": 0.5093,
+      "precisao_limiar": 0.9762,
+      "recall_limiar": 0.3445,
+      "brier": 0.0683,
+      "matriz_confusao": {
+        "tp": 41,
+        "fp": 1,
+        "fn": 78,
+        "tn": 847
+      },
+      "limiar": 0.5,
+      "fracao_k": 0.1,
+      "ic95": {
+        "precisao_at_k": [
+          0.4536,
+          0.6392
+        ],
+        "auc_pr": [
+          0.5671,
+          0.717
+        ],
+        "roc_auc": [
+          0.7508,
+          0.8528
+        ],
+        "ganho_capturado_at_k": [
+          0.6636,
+          0.8213
+        ]
+      },
+      "equidade": {
+        "por_faixa": {
+          "ALTA": {
+            "ucs": 187,
+            "irregulares": 20,
+            "fpr": 0.0,
+            "tpr": 0.7,
+            "fdr_top_k": 0.5806,
+            "indicadas_top_k": 31,
+            "taxa_indicacao": 0.1658
+          },
+          "MEDIA_ALTA": {
+            "ucs": 124,
+            "irregulares": 18,
+            "fpr": 0.0094,
+            "tpr": 0.4444,
+            "fdr_top_k": 0.4118,
+            "indicadas_top_k": 17,
+            "taxa_indicacao": 0.1371
+          },
+          "MEDIA": {
+            "ucs": 342,
+            "irregulares": 48,
+            "fpr": 0.0,
+            "tpr": 0.2917,
+            "fdr_top_k": 0.4054,
+            "indicadas_top_k": 37,
+            "taxa_indicacao": 0.1082
+          },
+          "BAIXA": {
+            "ucs": 314,
+            "irregulares": 33,
+            "fpr": 0.0,
+            "tpr": 0.1515,
+            "fdr_top_k": 0.25,
+            "indicadas_top_k": 12,
+            "taxa_indicacao": 0.0382
+          }
+        },
+        "razao_fpr": "inf",
+        "razao_fdr_top_k": 2.322,
+        "razao_tpr": 4.62,
+        "limite_I5": 1.25,
+        "k": 97
+      }
+    },
+    "XGB-C": {
+      "n": 967,
+      "positivos": 119,
+      "prevalencia": 0.1231,
+      "k": 97,
+      "precisao_at_k": 0.6392,
+      "recall_at_k": 0.521,
+      "ganho_capturado_at_k": 0.8282,
+      "roc_auc": 0.9595,
+      "auc_pr": 0.8081,
+      "f1_limiar": 0.7031,
+      "precisao_limiar": 0.6569,
+      "recall_limiar": 0.7563,
+      "brier": 0.0564,
+      "matriz_confusao": {
+        "tp": 90,
+        "fp": 47,
+        "fn": 29,
+        "tn": 801
+      },
+      "limiar": 0.5,
+      "fracao_k": 0.1,
+      "ic95": {
+        "precisao_at_k": [
+          0.5361,
+          0.7113
+        ],
+        "auc_pr": [
+          0.7537,
+          0.8597
+        ],
+        "roc_auc": [
+          0.9443,
+          0.9721
+        ],
+        "ganho_capturado_at_k": [
+          0.74,
+          0.8864
+        ]
+      },
+      "equidade": {
+        "por_faixa": {
+          "ALTA": {
+            "ucs": 187,
+            "irregulares": 20,
+            "fpr": 0.0359,
+            "tpr": 0.85,
+            "fdr_top_k": 0.3478,
+            "indicadas_top_k": 23,
+            "taxa_indicacao": 0.123
+          },
+          "MEDIA_ALTA": {
+            "ucs": 124,
+            "irregulares": 18,
+            "fpr": 0.0377,
+            "tpr": 0.8333,
+            "fdr_top_k": 0.3077,
+            "indicadas_top_k": 13,
+            "taxa_indicacao": 0.1048
+          },
+          "MEDIA": {
+            "ucs": 342,
+            "irregulares": 48,
+            "fpr": 0.0544,
+            "tpr": 0.7292,
+            "fdr_top_k": 0.3429,
+            "indicadas_top_k": 35,
+            "taxa_indicacao": 0.1023
+          },
+          "BAIXA": {
+            "ucs": 314,
+            "irregulares": 33,
+            "fpr": 0.0747,
+            "tpr": 0.697,
+            "fdr_top_k": 0.4231,
+            "indicadas_top_k": 26,
+            "taxa_indicacao": 0.0828
+          }
+        },
+        "razao_fpr": 2.081,
+        "razao_fdr_top_k": 1.375,
+        "razao_tpr": 1.22,
+        "limite_I5": 1.25,
+        "k": 97
+      }
+    },
+    "XGB-CB": {
+      "n": 967,
+      "positivos": 119,
+      "prevalencia": 0.1231,
+      "k": 97,
+      "precisao_at_k": 0.6804,
+      "recall_at_k": 0.5546,
+      "ganho_capturado_at_k": 0.8648,
+      "roc_auc": 0.9716,
+      "auc_pr": 0.8843,
+      "f1_limiar": 0.7792,
+      "precisao_limiar": 0.8036,
+      "recall_limiar": 0.7563,
+      "brier": 0.0387,
+      "matriz_confusao": {
+        "tp": 90,
+        "fp": 22,
+        "fn": 29,
+        "tn": 826
+      },
+      "limiar": 0.5,
+      "fracao_k": 0.1,
+      "ic95": {
+        "precisao_at_k": [
+          0.5876,
+          0.7732
+        ],
+        "auc_pr": [
+          0.8418,
+          0.9238
+        ],
+        "roc_auc": [
+          0.9575,
+          0.9831
+        ],
+        "ganho_capturado_at_k": [
+          0.8008,
+          0.9226
+        ]
+      },
+      "equidade": {
+        "por_faixa": {
+          "ALTA": {
+            "ucs": 187,
+            "irregulares": 20,
+            "fpr": 0.0,
+            "tpr": 0.85,
+            "fdr_top_k": 0.125,
+            "indicadas_top_k": 16,
+            "taxa_indicacao": 0.0856
+          },
+          "MEDIA_ALTA": {
+            "ucs": 124,
+            "irregulares": 18,
+            "fpr": 0.0189,
+            "tpr": 0.7222,
+            "fdr_top_k": 0.25,
+            "indicadas_top_k": 12,
+            "taxa_indicacao": 0.0968
+          },
+          "MEDIA": {
+            "ucs": 342,
+            "irregulares": 48,
+            "fpr": 0.0374,
+            "tpr": 0.7708,
+            "fdr_top_k": 0.4286,
+            "indicadas_top_k": 42,
+            "taxa_indicacao": 0.1228
+          },
+          "BAIXA": {
+            "ucs": 314,
+            "irregulares": 33,
+            "fpr": 0.032,
+            "tpr": 0.697,
+            "fdr_top_k": 0.2963,
+            "indicadas_top_k": 27,
+            "taxa_indicacao": 0.086
+          }
+        },
+        "razao_fpr": "inf",
+        "razao_fdr_top_k": 3.429,
+        "razao_tpr": 1.22,
+        "limite_I5": 1.25,
+        "k": 97
+      }
+    },
+    "XGB-V": {
+      "n": 967,
+      "positivos": 119,
+      "prevalencia": 0.1231,
+      "k": 97,
+      "precisao_at_k": 0.6289,
+      "recall_at_k": 0.5126,
+      "ganho_capturado_at_k": 0.8039,
+      "roc_auc": 0.8778,
+      "auc_pr": 0.7347,
+      "f1_limiar": 0.6534,
+      "precisao_limiar": 0.6212,
+      "recall_limiar": 0.6891,
+      "brier": 0.074,
+      "matriz_confusao": {
+        "tp": 82,
+        "fp": 50,
+        "fn": 37,
+        "tn": 798
+      },
+      "limiar": 0.5,
+      "fracao_k": 0.1,
+      "ic95": {
+        "precisao_at_k": [
+          0.5258,
+          0.7113
+        ],
+        "auc_pr": [
+          0.6671,
+          0.7984
+        ],
+        "roc_auc": [
+          0.8372,
+          0.9146
+        ],
+        "ganho_capturado_at_k": [
+          0.7168,
+          0.8684
+        ]
+      },
+      "equidade": {
+        "por_faixa": {
+          "ALTA": {
+            "ucs": 187,
+            "irregulares": 20,
+            "fpr": 0.0359,
+            "tpr": 0.85,
+            "fdr_top_k": 0.2381,
+            "indicadas_top_k": 21,
+            "taxa_indicacao": 0.1123
+          },
+          "MEDIA_ALTA": {
+            "ucs": 124,
+            "irregulares": 18,
+            "fpr": 0.0377,
+            "tpr": 0.6111,
+            "fdr_top_k": 0.2222,
+            "indicadas_top_k": 9,
+            "taxa_indicacao": 0.0726
+          },
+          "MEDIA": {
+            "ucs": 342,
+            "irregulares": 48,
+            "fpr": 0.0782,
+            "tpr": 0.6875,
+            "fdr_top_k": 0.4524,
+            "indicadas_top_k": 42,
+            "taxa_indicacao": 0.1228
+          },
+          "BAIXA": {
+            "ucs": 314,
+            "irregulares": 33,
+            "fpr": 0.0605,
+            "tpr": 0.6364,
+            "fdr_top_k": 0.4,
+            "indicadas_top_k": 25,
+            "taxa_indicacao": 0.0796
+          }
+        },
+        "razao_fpr": 2.178,
+        "razao_fdr_top_k": 2.036,
+        "razao_tpr": 1.391,
+        "limite_I5": 1.25,
+        "k": 97
+      }
+    },
+    "XGB-CBV": {
+      "n": 967,
+      "positivos": 119,
+      "prevalencia": 0.1231,
+      "k": 97,
+      "precisao_at_k": 0.7526,
+      "recall_at_k": 0.6134,
+      "ganho_capturado_at_k": 0.9356,
+      "roc_auc": 0.9821,
+      "auc_pr": 0.9334,
+      "f1_limiar": 0.8718,
+      "precisao_limiar": 0.887,
+      "recall_limiar": 0.8571,
+      "brier": 0.0264,
+      "matriz_confusao": {
+        "tp": 102,
+        "fp": 13,
+        "fn": 17,
+        "tn": 835
+      },
+      "limiar": 0.5,
+      "fracao_k": 0.1,
+      "ic95": {
+        "precisao_at_k": [
+          0.6392,
+          0.8557
+        ],
+        "auc_pr": [
+          0.9016,
+          0.961
+        ],
+        "roc_auc": [
+          0.9684,
+          0.9919
+        ],
+        "ganho_capturado_at_k": [
+          0.886,
+          0.9766
+        ]
+      },
+      "equidade": {
+        "por_faixa": {
+          "ALTA": {
+            "ucs": 187,
+            "irregulares": 20,
+            "fpr": 0.0,
+            "tpr": 0.95,
+            "fdr_top_k": 0.1667,
+            "indicadas_top_k": 18,
+            "taxa_indicacao": 0.0963
+          },
+          "MEDIA_ALTA": {
+            "ucs": 124,
+            "irregulares": 18,
+            "fpr": 0.0189,
+            "tpr": 0.8333,
+            "fdr_top_k": 0.1667,
+            "indicadas_top_k": 12,
+            "taxa_indicacao": 0.0968
+          },
+          "MEDIA": {
+            "ucs": 342,
+            "irregulares": 48,
+            "fpr": 0.0136,
+            "tpr": 0.8958,
+            "fdr_top_k": 0.3171,
+            "indicadas_top_k": 41,
+            "taxa_indicacao": 0.1199
+          },
+          "BAIXA": {
+            "ucs": 314,
+            "irregulares": 33,
+            "fpr": 0.0249,
+            "tpr": 0.7576,
+            "fdr_top_k": 0.2308,
+            "indicadas_top_k": 26,
+            "taxa_indicacao": 0.0828
+          }
+        },
+        "razao_fpr": "inf",
+        "razao_fdr_top_k": 1.902,
+        "razao_tpr": 1.254,
+        "limite_I5": 1.25,
+        "k": 97
+      },
+      "acuracia_categoria_nos_irregulares": 0.8487
+    }
+  },
+  "armadilhas": {
+    "BASELINE": {
+      "COM_INFORMAL": {
+        "n": 30,
+        "taxa_indicada": 0.0
+      },
+      "CONSUMO_ALTO_RES": {
+        "n": 52,
+        "taxa_indicada": 0.0
+      },
+      "HOME_SERVICE": {
+        "n": 63,
+        "taxa_indicada": 0.0
+      },
+      "IMAGEM_DESATUALIZADA": {
+        "n": 16,
+        "taxa_indicada": 0.0
+      },
+      "MEI_SEM_ATIVIDADE": {
+        "n": 47,
+        "taxa_indicada": 0.0
+      },
+      "RES_COM_I": {
+        "n": 39,
+        "taxa_indicada": 0.7436
+      },
+      "RES_COM_II": {
+        "n": 39,
+        "taxa_indicada": 0.0256
+      },
+      "RES_IND": {
+        "n": 11,
+        "taxa_indicada": 1.0
+      },
+      "RES_OK": {
+        "n": 593,
+        "taxa_indicada": 0.0017
+      },
+      "SOCIAL_ELEGIVEL": {
+        "n": 47,
+        "taxa_indicada": 0.0
+      },
+      "SOCIAL_OK": {
+        "n": 30,
+        "taxa_indicada": 0.0
+      }
+    },
+    "XGB-C": {
+      "COM_INFORMAL": {
+        "n": 30,
+        "taxa_indicada": 0.5
+      },
+      "CONSUMO_ALTO_RES": {
+        "n": 52,
+        "taxa_indicada": 0.4423
+      },
+      "HOME_SERVICE": {
+        "n": 63,
+        "taxa_indicada": 0.0
+      },
+      "IMAGEM_DESATUALIZADA": {
+        "n": 16,
+        "taxa_indicada": 0.0
+      },
+      "MEI_SEM_ATIVIDADE": {
+        "n": 47,
+        "taxa_indicada": 0.0213
+      },
+      "RES_COM_I": {
+        "n": 39,
+        "taxa_indicada": 0.8205
+      },
+      "RES_COM_II": {
+        "n": 39,
+        "taxa_indicada": 0.8205
+      },
+      "RES_IND": {
+        "n": 11,
+        "taxa_indicada": 1.0
+      },
+      "RES_OK": {
+        "n": 593,
+        "taxa_indicada": 0.0101
+      },
+      "SOCIAL_ELEGIVEL": {
+        "n": 47,
+        "taxa_indicada": 0.1915
+      },
+      "SOCIAL_OK": {
+        "n": 30,
+        "taxa_indicada": 0.2667
+      }
+    },
+    "XGB-CB": {
+      "COM_INFORMAL": {
+        "n": 30,
+        "taxa_indicada": 0.4667
+      },
+      "CONSUMO_ALTO_RES": {
+        "n": 52,
+        "taxa_indicada": 0.0769
+      },
+      "HOME_SERVICE": {
+        "n": 63,
+        "taxa_indicada": 0.0
+      },
+      "IMAGEM_DESATUALIZADA": {
+        "n": 16,
+        "taxa_indicada": 0.0
+      },
+      "MEI_SEM_ATIVIDADE": {
+        "n": 47,
+        "taxa_indicada": 0.0
+      },
+      "RES_COM_I": {
+        "n": 39,
+        "taxa_indicada": 0.9231
+      },
+      "RES_COM_II": {
+        "n": 39,
+        "taxa_indicada": 0.7436
+      },
+      "RES_IND": {
+        "n": 11,
+        "taxa_indicada": 1.0
+      },
+      "RES_OK": {
+        "n": 593,
+        "taxa_indicada": 0.0169
+      },
+      "SOCIAL_ELEGIVEL": {
+        "n": 47,
+        "taxa_indicada": 0.0851
+      },
+      "SOCIAL_OK": {
+        "n": 30,
+        "taxa_indicada": 0.1333
+      }
+    },
+    "XGB-V": {
+      "COM_INFORMAL": {
+        "n": 30,
+        "taxa_indicada": 0.3667
+      },
+      "CONSUMO_ALTO_RES": {
+        "n": 52,
+        "taxa_indicada": 0.0769
+      },
+      "HOME_SERVICE": {
+        "n": 63,
+        "taxa_indicada": 0.1429
+      },
+      "IMAGEM_DESATUALIZADA": {
+        "n": 16,
+        "taxa_indicada": 0.0
+      },
+      "MEI_SEM_ATIVIDADE": {
+        "n": 47,
+        "taxa_indicada": 0.0638
+      },
+      "RES_COM_I": {
+        "n": 39,
+        "taxa_indicada": 0.8462
+      },
+      "RES_COM_II": {
+        "n": 39,
+        "taxa_indicada": 0.6923
+      },
+      "RES_IND": {
+        "n": 11,
+        "taxa_indicada": 1.0
+      },
+      "RES_OK": {
+        "n": 593,
+        "taxa_indicada": 0.0573
+      },
+      "SOCIAL_ELEGIVEL": {
+        "n": 47,
+        "taxa_indicada": 0.0
+      },
+      "SOCIAL_OK": {
+        "n": 30,
+        "taxa_indicada": 0.0
+      }
+    },
+    "XGB-CBV": {
+      "COM_INFORMAL": {
+        "n": 30,
+        "taxa_indicada": 0.6667
+      },
+      "CONSUMO_ALTO_RES": {
+        "n": 52,
+        "taxa_indicada": 0.0769
+      },
+      "HOME_SERVICE": {
+        "n": 63,
+        "taxa_indicada": 0.0
+      },
+      "IMAGEM_DESATUALIZADA": {
+        "n": 16,
+        "taxa_indicada": 0.0
+      },
+      "MEI_SEM_ATIVIDADE": {
+        "n": 47,
+        "taxa_indicada": 0.0
+      },
+      "RES_COM_I": {
+        "n": 39,
+        "taxa_indicada": 0.9744
+      },
+      "RES_COM_II": {
+        "n": 39,
+        "taxa_indicada": 0.8462
+      },
+      "RES_IND": {
+        "n": 11,
+        "taxa_indicada": 1.0
+      },
+      "RES_OK": {
+        "n": 593,
+        "taxa_indicada": 0.0067
+      },
+      "SOCIAL_ELEGIVEL": {
+        "n": 47,
+        "taxa_indicada": 0.0851
+      },
+      "SOCIAL_OK": {
+        "n": 30,
+        "taxa_indicada": 0.0333
+      }
+    }
+  },
+  "importancia_atributos": [
+    [
+      "v_doca_carga",
+      43.17340850830078
+    ],
+    [
+      "v_portao_industrial",
+      40.887046813964844
+    ],
+    [
+      "b_cnpj_ativo_mei",
+      18.256149291992188
+    ],
+    [
+      "v_n_deteccoes",
+      17.836376190185547
+    ],
+    [
+      "b_cnpj_ativo_nao_mei",
+      9.86250114440918
+    ],
+    [
+      "c_volume_ref",
+      8.916301727294922
+    ],
+    [
+      "v_letreiro",
+      3.62689208984375
+    ],
+    [
+      "c_volume_inicial",
+      3.6179332733154297
+    ],
+    [
+      "v_banner",
+      3.519850254058838
+    ],
+    [
+      "b_cnae_alimentacao_veiculos",
+      2.188502788543701
+    ],
+    [
+      "v_placa_comercial",
+      2.1809253692626953
+    ],
+    [
+      "v_imagem_disponivel",
+      1.881927490234375
+    ],
+    [
+      "c_salto_max",
+      1.1761281490325928
+    ],
+    [
+      "v_imagem_desatualizada",
+      1.0523240566253662
+    ],
+    [
+      "v_vitrine",
+      0.9523229598999023
+    ],
+    [
+      "b_zona_misto",
+      0.6824741363525391
+    ],
+    [
+      "c_razao_regime",
+      0.5431379675865173
+    ],
+    [
+      "b_zona_comercial",
+      0.455426961183548
+    ],
+    [
+      "c_cv_12m",
+      0.3918709456920624
+    ],
+    [
+      "c_tendencia_12m",
+      0.3755573630332947
+    ],
+    [
+      "c_frac_estimadas",
+      0.2656128704547882
+    ],
+    [
+      "b_cnpj_inativo",
+      0.0
+    ],
+    [
+      "b_alvara_vigente",
+      0.0
+    ],
+    [
+      "b_alvara_vencido",
+      0.0
+    ],
+    [
+      "b_zona_industrial",
+      0.0
+    ],
+    [
+      "v_estacionamento_clientes",
+      0.0
+    ]
+  ],
+  "casos_curados": [
+    {
+      "uc": 1,
+      "cenario": "RES_OK",
+      "faixa": "ALTA",
+      "irregular": false,
+      "p": 0.001,
+      "sugerida": "RESIDENCIAL_NORMAL",
+      "posicao": 15
+    },
+    {
+      "uc": 2,
+      "cenario": "RES_COM_I",
+      "faixa": "ALTA",
+      "irregular": true,
+      "p": 1.0,
+      "sugerida": "COMERCIAL_I",
+      "posicao": 5
+    },
+    {
+      "uc": 3,
+      "cenario": "CONSUMO_ALTO_RES",
+      "faixa": "ALTA",
+      "irregular": false,
+      "p": 0.006,
+      "sugerida": "RESIDENCIAL_NORMAL",
+      "posicao": 11
+    },
+    {
+      "uc": 4,
+      "cenario": "COM_OK",
+      "faixa": "ALTA",
+      "irregular": false,
+      "p": 0.001,
+      "sugerida": "COMERCIAL_I",
+      "posicao": null
+    },
+    {
+      "uc": 5,
+      "cenario": "MEI_SEM_ATIVIDADE",
+      "faixa": "ALTA",
+      "irregular": false,
+      "p": 0.0,
+      "sugerida": "RESIDENCIAL_NORMAL",
+      "posicao": 21
+    },
+    {
+      "uc": 6,
+      "cenario": "RES_OK",
+      "faixa": "ALTA",
+      "irregular": false,
+      "p": 0.0,
+      "sugerida": "RESIDENCIAL_NORMAL",
+      "posicao": 24
+    },
+    {
+      "uc": 7,
+      "cenario": "RES_COM_I",
+      "faixa": "ALTA",
+      "irregular": true,
+      "p": 1.0,
+      "sugerida": "COMERCIAL_I",
+      "posicao": 6
+    },
+    {
+      "uc": 8,
+      "cenario": "RES_COM_II",
+      "faixa": "MEDIA_ALTA",
+      "irregular": true,
+      "p": 0.999,
+      "sugerida": "COMERCIAL_II",
+      "posicao": 17
+    },
+    {
+      "uc": 9,
+      "cenario": "RES_OK",
+      "faixa": "MEDIA_ALTA",
+      "irregular": false,
+      "p": 0.0,
+      "sugerida": "RESIDENCIAL_NORMAL",
+      "posicao": 22
+    },
+    {
+      "uc": 10,
+      "cenario": "HOME_SERVICE",
+      "faixa": "MEDIA_ALTA",
+      "irregular": false,
+      "p": 0.001,
+      "sugerida": "RESIDENCIAL_NORMAL",
+      "posicao": 12
+    },
+    {
+      "uc": 11,
+      "cenario": "RES_COM_I",
+      "faixa": "MEDIA_ALTA",
+      "irregular": true,
+      "p": 1.0,
+      "sugerida": "COMERCIAL_I",
+      "posicao": 4
+    },
+    {
+      "uc": 12,
+      "cenario": "IMAGEM_DESATUALIZADA",
+      "faixa": "MEDIA_ALTA",
+      "irregular": false,
+      "p": 0.001,
+      "sugerida": "RESIDENCIAL_NORMAL",
+      "posicao": 14
+    },
+    {
+      "uc": 13,
+      "cenario": "RES_COM_I",
+      "faixa": "MEDIA",
+      "irregular": true,
+      "p": 0.998,
+      "sugerida": "COMERCIAL_I",
+      "posicao": 3
+    },
+    {
+      "uc": 14,
+      "cenario": "COM_II_OK",
+      "faixa": "MEDIA",
+      "irregular": false,
+      "p": 0.0,
+      "sugerida": "COMERCIAL_II",
+      "posicao": null
+    },
+    {
+      "uc": 15,
+      "cenario": "COM_INFORMAL",
+      "faixa": "MEDIA",
+      "irregular": true,
+      "p": 0.857,
+      "sugerida": "COMERCIAL_I",
+      "posicao": 9
+    },
+    {
+      "uc": 16,
+      "cenario": "RES_OK",
+      "faixa": "MEDIA",
+      "irregular": false,
+      "p": 0.0,
+      "sugerida": "RESIDENCIAL_NORMAL",
+      "posicao": 23
+    },
+    {
+      "uc": 17,
+      "cenario": "SOCIAL_ELEGIVEL",
+      "faixa": "MEDIA",
+      "irregular": false,
+      "p": 0.016,
+      "sugerida": "RESIDENCIAL_NORMAL",
+      "posicao": 25
+    },
+    {
+      "uc": 18,
+      "cenario": "RES_COM_I",
+      "faixa": "MEDIA",
+      "irregular": true,
+      "p": 0.999,
+      "sugerida": "COMERCIAL_I",
+      "posicao": 7
+    },
+    {
+      "uc": 19,
+      "cenario": "MEI_SEM_ATIVIDADE",
+      "faixa": "MEDIA",
+      "irregular": false,
+      "p": 0.0,
+      "sugerida": "RESIDENCIAL_NORMAL",
+      "posicao": 27
+    },
+    {
+      "uc": 20,
+      "cenario": "IND_OK",
+      "faixa": "MEDIA",
+      "irregular": false,
+      "p": 0.004,
+      "sugerida": "INDUSTRIAL",
+      "posicao": null
+    },
+    {
+      "uc": 21,
+      "cenario": "RES_IND",
+      "faixa": "MEDIA",
+      "irregular": true,
+      "p": 1.0,
+      "sugerida": "INDUSTRIAL",
+      "posicao": 1
+    },
+    {
+      "uc": 22,
+      "cenario": "SOCIAL_ELEGIVEL",
+      "faixa": "BAIXA",
+      "irregular": false,
+      "p": 0.001,
+      "sugerida": "RESIDENCIAL_NORMAL",
+      "posicao": 26
+    },
+    {
+      "uc": 23,
+      "cenario": "RES_COM_II",
+      "faixa": "BAIXA",
+      "irregular": true,
+      "p": 0.997,
+      "sugerida": "COMERCIAL_II",
+      "posicao": 16
+    },
+    {
+      "uc": 24,
+      "cenario": "CONSUMO_ALTO_RES",
+      "faixa": "BAIXA",
+      "irregular": false,
+      "p": 0.045,
+      "sugerida": "RESIDENCIAL_NORMAL",
+      "posicao": 10
+    },
+    {
+      "uc": 25,
+      "cenario": "HOME_SERVICE",
+      "faixa": "BAIXA",
+      "irregular": false,
+      "p": 0.001,
+      "sugerida": "RESIDENCIAL_NORMAL",
+      "posicao": 18
+    },
+    {
+      "uc": 26,
+      "cenario": "SOCIAL_OK",
+      "faixa": "BAIXA",
+      "irregular": false,
+      "p": 0.001,
+      "sugerida": "RESIDENCIAL_SOCIAL",
+      "posicao": 19
+    },
+    {
+      "uc": 27,
+      "cenario": "RES_COM_I",
+      "faixa": "BAIXA",
+      "irregular": true,
+      "p": 1.0,
+      "sugerida": "COMERCIAL_I",
+      "posicao": 2
+    },
+    {
+      "uc": 28,
+      "cenario": "SOCIAL_ELEGIVEL",
+      "faixa": "BAIXA",
+      "irregular": false,
+      "p": 0.004,
+      "sugerida": "RESIDENCIAL_NORMAL",
+      "posicao": 20
+    },
+    {
+      "uc": 29,
+      "cenario": "RES_OK",
+      "faixa": "BAIXA",
+      "irregular": false,
+      "p": 0.001,
+      "sugerida": "RESIDENCIAL_NORMAL",
+      "posicao": 13
+    },
+    {
+      "uc": 30,
+      "cenario": "COM_INFORMAL",
+      "faixa": "BAIXA",
+      "irregular": true,
+      "p": 0.859,
+      "sugerida": "COMERCIAL_I",
+      "posicao": 8
+    }
+  ],
+  "yolo": {
+    "modelo": "YOLOv11n (fine-tuning a partir de COCO)",
+    "classes": [
+      "placa_comercial",
+      "letreiro",
+      "vitrine",
+      "banner",
+      "portao_industrial",
+      "doca_carga",
+      "estacionamento_clientes",
+      "rosto",
+      "placa_veiculo"
+    ],
+    "n_treino": 600,
+    "n_val": 150,
+    "epocas": 12,
+    "imgsz": 416,
+    "lote": 16,
+    "semente": 20261125,
+    "dispositivo": "cpu",
+    "mAP50": 0.9963,
+    "mAP50_95": 0.94,
+    "precisao_media": 0.995,
+    "recall_medio": 0.9828,
+    "por_classe": {
+      "placa_comercial": {
+        "mAP50": 1.0,
+        "mAP50_95": 0.9312
+      },
+      "letreiro": {
+        "mAP50": 1.0,
+        "mAP50_95": 0.9522
+      },
+      "vitrine": {
+        "mAP50": 1.0,
+        "mAP50_95": 0.9675
+      },
+      "banner": {
+        "mAP50": 1.0,
+        "mAP50_95": 0.9638
+      },
+      "portao_industrial": {
+        "mAP50": 1.0,
+        "mAP50_95": 0.9817
+      },
+      "doca_carga": {
+        "mAP50": 0.9865,
+        "mAP50_95": 0.9281
+      },
+      "estacionamento_clientes": {
+        "mAP50": 1.0,
+        "mAP50_95": 0.8881
+      },
+      "rosto": {
+        "mAP50": 0.9802,
+        "mAP50_95": 0.8961
+      },
+      "placa_veiculo": {
+        "mAP50": 1.0,
+        "mAP50_95": 0.9513
+      }
+    },
+    "tempo_geracao_dados_s": 7.6,
+    "tempo_treino_s": 1471.8
+  },
+  "tempo_inferencia_s_por_imagem": 0.0322,
+  "tempo_total_s": 168.2
+}

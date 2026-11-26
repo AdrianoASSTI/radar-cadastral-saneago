@@ -1,0 +1,55 @@
+{
+  "linhas": [
+    {
+      "modo": "SEQUENCIAL",
+      "p": 1,
+      "repeticoes": 3,
+      "ucs": 200,
+      "T_medio_s": 22.65,
+      "T_dp_s": 1.41,
+      "speedup": 1.0,
+      "eficiencia": 1.0,
+      "vazao_ucs_s": 8.83,
+      "karp_flatt": null,
+      "latencia_ms_mediana": 106.0,
+      "workers_ativos": 1,
+      "desequilibrio_carga": 1.0,
+      "falhas": 0
+    },
+    {
+      "modo": "PARALELO",
+      "p": 1,
+      "repeticoes": 3,
+      "ucs": 200,
+      "T_medio_s": 21.39,
+      "T_dp_s": 0.47,
+      "speedup": 1.059,
+      "eficiencia": 1.059,
+      "vazao_ucs_s": 9.35,
+      "karp_flatt": null,
+      "latencia_ms_mediana": 101.5,
+      "workers_ativos": 1,
+      "desequilibrio_carga": 1.0,
+      "falhas": 0
+    },
+    {
+      "modo": "PARALELO",
+      "p": 2,
+      "repeticoes": 3,
+      "ucs": 200,
+      "T_medio_s": 17.14,
+      "T_dp_s": 3.19,
+      "speedup": 1.321,
+      "eficiencia": 0.661,
+      "vazao_ucs_s": 11.668,
+      "karp_flatt": 0.5135,
+      "latencia_ms_mediana": 121.0,
+      "workers_ativos": 2,
+      "desequilibrio_carga": 1.22,
+      "falhas": 0
+    }
+  ],
+  "T_sequencial_s": 22.65,
+  "amdahl_fracao_serial": 0.514,
+  "amdahl_speedup_maximo": 1.95
+}

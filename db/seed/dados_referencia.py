@@ -317,6 +317,33 @@ ATIVIDADES_POR_CENARIO = {
     "IND_OK": [("Fábrica de sorvetes", "1053800", "Fabricação de sorvetes e outros gelados comestíveis")],
 }
 
+# -----------------------------------------------------------------------------
+# Ruído realista (SÓ nas UCs procedurais): sobreposição entre classes, para que
+# nenhum grupo de atributos separe os cenários sozinho (docs/04, ameaças à validade).
+# -----------------------------------------------------------------------------
+# Variações de consumo: lista de (probabilidade, série alternativa)
+VARIACOES_CONSUMO = {
+    "RES_OK": [(0.18, ("degrau", (9, 14), (15, 24), (3, 20))),        # família cresceu / novos moradores
+               (0.05, ("degrau", (14, 20), (8, 12), (3, 20)))],       # redução (moradores saíram)
+    "CONSUMO_ALTO_RES": [(0.35, ("degrau", (12, 16), (22, 32), (3, 18)))],  # piscina construída
+    "RES_COM_I": [(0.40, ("estavel", (20, 40), 3.0))],                 # negócio anterior à série histórica
+    "COM_INFORMAL": [(0.45, ("estavel", (15, 24), 2.0))],
+    "RES_COM_II": [(0.50, ("estavel", (7.5, 9.8), 0.7))],
+    "RES_IND": [(0.30, ("estavel", (55, 95), 6.0))],
+}
+# Distratores visuais em imóveis SEM atividade (placa de imóvel à venda, faixa de festa/eleição)
+DISTRATORES_VISUAIS = {
+    "RES_OK": [(0.06, ["placa_comercial"]), (0.03, ["banner"])],
+    "CONSUMO_ALTO_RES": [(0.06, ["placa_comercial"]), (0.03, ["banner"])],
+    "MEI_SEM_ATIVIDADE": [(0.10, ["placa_comercial"])],
+    "SOCIAL_ELEGIVEL": [(0.04, ["banner"])],
+}
+# Probabilidade de cada elemento comercial aparecer na foto (oclusão, ângulo, sinalização ausente)
+PROB_ELEMENTO_VISIVEL = {"COM_INFORMAL": 0.6, "RES_COM_II": 0.7}
+PROB_ELEMENTO_VISIVEL_PADRAO = 0.8
+# Residências com CNPJ BAIXADO de negócio antigo no endereço
+PROB_CNPJ_BAIXADO_RES = 0.04
+
 # Probabilidade de o cenário ter CNPJ ativo no endereço (geração procedural)
 PROB_CNPJ = {"RES_COM_I": .7, "RES_COM_II": .4, "RES_IND": .8, "MEI_SEM_ATIVIDADE": 1.0,
              "HOME_SERVICE": .5, "COM_OK": 1.0, "COM_II_OK": 1.0, "IND_OK": 1.0}

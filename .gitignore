@@ -4,8 +4,9 @@ __pycache__/
 .venv/
 node_modules/
 dist/
+# pesos treinados ficam fora do git, EXCETO os distribuídos com o projeto
 *.pt
 *.onnx
-experiments/resultados/*
-!experiments/resultados/.gitkeep
+!services/ai_worker/modelos/*.pt
+.pytest_cache/
 .DS_Store

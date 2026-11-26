@@ -1,0 +1,65 @@
+{
+  "modelo": "YOLOv11n (fine-tuning a partir de COCO)",
+  "classes": [
+    "placa_comercial",
+    "letreiro",
+    "vitrine",
+    "banner",
+    "portao_industrial",
+    "doca_carga",
+    "estacionamento_clientes",
+    "rosto",
+    "placa_veiculo"
+  ],
+  "n_treino": 600,
+  "n_val": 150,
+  "epocas": 12,
+  "imgsz": 416,
+  "lote": 16,
+  "semente": 20261125,
+  "dispositivo": "cpu",
+  "mAP50": 0.9963,
+  "mAP50_95": 0.94,
+  "precisao_media": 0.995,
+  "recall_medio": 0.9828,
+  "por_classe": {
+    "placa_comercial": {
+      "mAP50": 1.0,
+      "mAP50_95": 0.9312
+    },
+    "letreiro": {
+      "mAP50": 1.0,
+      "mAP50_95": 0.9522
+    },
+    "vitrine": {
+      "mAP50": 1.0,
+      "mAP50_95": 0.9675
+    },
+    "banner": {
+      "mAP50": 1.0,
+      "mAP50_95": 0.9638
+    },
+    "portao_industrial": {
+      "mAP50": 1.0,
+      "mAP50_95": 0.9817
+    },
+    "doca_carga": {
+      "mAP50": 0.9865,
+      "mAP50_95": 0.9281
+    },
+    "estacionamento_clientes": {
+      "mAP50": 1.0,
+      "mAP50_95": 0.8881
+    },
+    "rosto": {
+      "mAP50": 0.9802,
+      "mAP50_95": 0.8961
+    },
+    "placa_veiculo": {
+      "mAP50": 1.0,
+      "mAP50_95": 0.9513
+    }
+  },
+  "tempo_geracao_dados_s": 7.6,
+  "tempo_treino_s": 1471.8
+}

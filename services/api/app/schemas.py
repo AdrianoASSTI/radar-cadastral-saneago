@@ -51,6 +51,8 @@ class LoteIn(BaseModel):
     categorias: list[Categoria] = ["RESIDENCIAL_NORMAL", "RESIDENCIAL_SOCIAL"]
     limite: int | None = Field(None, ge=1, le=200_000)
     modo: Literal["PARALELO", "SEQUENCIAL"] = "PARALELO"
+    etiqueta: str | None = Field(None, max_length=80,
+                                 description="Rótulo livre (ex.: 'speedup:n=4:rep=1') para agrupar lotes de experimento")
 
 
 # ------------------------------------------------------------------ fila / ordens

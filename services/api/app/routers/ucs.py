@@ -3,8 +3,12 @@
 from __future__ import annotations
 
 import hashlib
+import os
+from pathlib import Path
+from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi.responses import FileResponse
 from radar_comum.ganho import volume_referencia
 
 from ..config import settings
@@ -58,6 +62,23 @@ async def bairros(_: Usuario = Depends(exigir(*LEITURA_GESTAO)), conn=Depends(co
                (SELECT count(*) FROM cadastro.unidade_consumidora u WHERE u.bairro_id = b.id) AS ucs
         FROM cadastro.bairro b ORDER BY b.id""")
     return await cur.fetchall()
+
+
+@router.get("/imagens/{imagem_id}", summary="Imagem de fachada JÁ ANONIMIZADA (rostos e placas borrados)",
+            response_class=FileResponse)
+async def imagem(imagem_id: UUID, _: Usuario = Depends(exigir(*LEITURA_GESTAO, "FISCAL")), conn=Depends(conexao)):
+    cur = await conn.execute("""SELECT uri_objeto, anonimizada, expurgada_em FROM analise.imagem_fachada
+                                WHERE id = %s""", (imagem_id,))
+    r = await cur.fetchone()
+    if not r:
+        raise HTTPException(404, "Imagem não encontrada")
+    if r["expurgada_em"]:
+        raise HTTPException(410, "Imagem expurgada (prazo de retenção LGPD vencido)")
+    raiz = Path(os.getenv("STORAGE_LOCAL_PATH", "/data/imagens")).resolve()
+    arq = (raiz / r["uri_objeto"]).resolve()
+    if raiz not in arq.parents or not arq.exists():
+        raise HTTPException(404, "Arquivo indisponível")
+    return FileResponse(arq, media_type="image/jpeg", headers={"Cache-Control": "private, max-age=300"})
 
 
 @router.get("/{uc_id}", summary="Detalhe da UC: consumo, evidências, última análise, links, simulação")

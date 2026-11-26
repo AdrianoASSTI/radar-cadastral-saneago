@@ -1,0 +1,6 @@
+# Scripts executados dentro de contêineres Linux: sempre LF (evita erro $'\r' no Windows)
+*.sh   text eol=lf
+*.sql  text eol=lf
+*.py   text eol=lf
+Dockerfile text eol=lf
+*.yml  text eol=lf

@@ -1,0 +1,263 @@
+# =============================================================================
+# Radar Cadastral SANEAGO — Orquestração dos microsserviços
+# -----------------------------------------------------------------------------
+# Topologia (ver docs/01_RELATORIO_TECNICO_ARQUITETURA.md):
+#
+#   [frontend] --HTTP--> [api] --AMQP--> [rabbitmq] --> [collector xN] --> [rabbitmq] --> [ai_worker xM]
+#                          |                                 |                              |
+#                          +------------> [db: PostgreSQL + PostGIS] <-----------------------+
+#                                          [storage_imagens (volume compartilhado)]
+#
+# Duas redes isolam a borda (navegador -> frontend/api) da camada de dados.
+# O banco, o broker e os workers NÃO ficam expostos na rede de borda.
+#
+# Uso por etapa:
+#   Etapa 1 (agora):  docker compose up -d db rabbitmq seed
+#   Etapa 2:          docker compose up -d --build api
+#                     docker compose --profile ferramentas run --rm baseline
+#   Etapas 3–4:       docker compose up -d --build
+#   Experimentos:     docker compose --profile experimentos run --rm experiments
+#   Escala horizontal: docker compose up -d --scale ai_worker=8 --scale collector=4
+# =============================================================================
+
+name: radar-cadastral
+
+# Variáveis compartilhadas pelos serviços que falam com o broker.
+x-amqp-env: &amqp-env
+  RABBITMQ_URL: amqp://${RABBITMQ_USER:-radar}:${RABBITMQ_PASSWORD:-radar_dev}@rabbitmq:5672/${RABBITMQ_VHOST:-radar}
+  FILA_COLETA: ${FILA_COLETA:-radar.coleta}
+  FILA_ANALISE: ${FILA_ANALISE:-radar.analise}
+  FILA_RESULTADOS: ${FILA_RESULTADOS:-radar.resultados}
+  PREFETCH_COUNT: ${PREFETCH_COUNT:-4}
+
+x-storage-env: &storage-env
+  STORAGE_BACKEND: ${STORAGE_BACKEND:-local}     # local | s3
+  STORAGE_LOCAL_PATH: /data/imagens
+  RETENCAO_IMAGENS_DIAS: ${RETENCAO_IMAGENS_DIAS:-45}
+
+services:
+
+  # ---------------------------------------------------------------------------
+  # Banco relacional + geoespacial
+  # ---------------------------------------------------------------------------
+  db:
+    image: postgis/postgis:16-3.4
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-radar}
+      POSTGRES_USER: ${POSTGRES_USER:-radar_owner}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-radar_owner_dev}
+      TZ: America/Sao_Paulo
+      PGTZ: America/Sao_Paulo
+      # Senhas dos usuários de serviço (lidas por db/init/02_usuarios.sh).
+      # Cada serviço recebe o menor privilégio necessário.
+      DB_PASS_API: ${DB_PASS_API:-api_dev}
+      DB_PASS_API_SOCIAL: ${DB_PASS_API_SOCIAL:-api_social_dev}
+      DB_PASS_COLETOR: ${DB_PASS_COLETOR:-coletor_dev}
+      DB_PASS_IA: ${DB_PASS_IA:-ia_dev}
+      DB_PASS_IA_SOCIAL: ${DB_PASS_IA_SOCIAL:-ia_social_dev}
+      DB_PASS_EXPERIMENTO: ${DB_PASS_EXPERIMENTO:-experimento_dev}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./db/init:/docker-entrypoint-initdb.d:ro
+    ports:
+      - "${DB_PORT:-5432}:5432"          # exposto só para desenvolvimento/pgAdmin
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    networks: [rede_dados]
+
+  # ---------------------------------------------------------------------------
+  # Broker de mensageria (filas duráveis, ack manual, prefetch controlado)
+  # ---------------------------------------------------------------------------
+  rabbitmq:
+    image: rabbitmq:3.13-management
+    restart: unless-stopped
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-radar}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:-radar_dev}
+      RABBITMQ_DEFAULT_VHOST: ${RABBITMQ_VHOST:-radar}
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    ports:
+      - "${RABBITMQ_MGMT_PORT:-15672}:15672"   # painel de gestão (desenvolvimento)
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 10s
+      retries: 12
+    networks: [rede_dados]
+
+  # ---------------------------------------------------------------------------
+  # Seed: popula o banco com as 30 UCs sintéticas de Goiânia (execução única)
+  # ---------------------------------------------------------------------------
+  seed:
+    build: ./db/seed
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-radar_owner}:${POSTGRES_PASSWORD:-radar_owner_dev}@db:5432/${POSTGRES_DB:-radar}
+      SEED_RANDOM_STATE: ${SEED_RANDOM_STATE:-20261125}
+      SEED_EXTRA_UCS: ${SEED_EXTRA_UCS:-0}       # >0 gera UCs procedurais adicionais (testes de escala)
+      PSEUDONIMIZACAO_SALT: ${PSEUDONIMIZACAO_SALT:-troque-este-salt}
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: "no"
+    networks: [rede_dados]
+
+  # ---------------------------------------------------------------------------
+  # API REST (FastAPI) — Etapa 2
+  # ---------------------------------------------------------------------------
+  api:
+    build:
+      context: ./services            # inclui o pacote compartilhado services/comum
+      dockerfile: api/Dockerfile
+    restart: unless-stopped
+    environment:
+      <<: *amqp-env
+      PSEUDONIMIZACAO_SALT: ${PSEUDONIMIZACAO_SALT:-troque-este-salt}
+      # Conexão de fiscalização: NÃO tem acesso ao schema `social` (CadÚnico).
+      DATABASE_URL: postgresql://usr_api:${DB_PASS_API:-api_dev}@db:5432/${POSTGRES_DB:-radar}
+      # Conexão separada, usada só pelo módulo Tarifa Social (finalidade única, LGPD art. 6º, I).
+      DATABASE_URL_SOCIAL: postgresql://usr_api_social:${DB_PASS_API_SOCIAL:-api_social_dev}@db:5432/${POSTGRES_DB:-radar}
+      STORAGE_LOCAL_PATH: /data/imagens
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:5173}
+      JWT_SECRET: ${JWT_SECRET:-troque-este-segredo}
+    volumes:
+      - storage_imagens:/data/imagens:ro
+    ports:
+      - "${API_PORT:-8000}:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      seed:
+        condition: service_completed_successfully
+    networks: [rede_dados, rede_borda]
+
+  # ---------------------------------------------------------------------------
+  # Baseline por regras (sob demanda): ocupa o lugar do worker de IA até a Etapa 3
+  # e serve de linha de base no artigo. Usa o login do worker de IA (sem CadÚnico).
+  #   docker compose --profile ferramentas run --rm baseline
+  # ---------------------------------------------------------------------------
+  baseline:
+    build:
+      context: ./services
+      dockerfile: api/Dockerfile
+    profiles: ["ferramentas"]
+    environment:
+      DATABASE_URL: postgresql://usr_ia:${DB_PASS_IA:-ia_dev}@db:5432/${POSTGRES_DB:-radar}
+    command: ["python", "-m", "scripts.baseline_regras"]
+    depends_on:
+      db:
+        condition: service_healthy
+    networks: [rede_dados]
+
+  # ---------------------------------------------------------------------------
+  # Worker de coleta e cruzamento (Geo360 / Mapillary / Leituristas + bases públicas) — Etapa 3
+  # ---------------------------------------------------------------------------
+  collector:
+    build: ./services/collector
+    restart: unless-stopped
+    environment:
+      <<: [*amqp-env, *storage-env]
+      DATABASE_URL: postgresql://usr_coletor:${DB_PASS_COLETOR:-coletor_dev}@db:5432/${POSTGRES_DB:-radar}
+      FONTES_IMAGEM: ${FONTES_IMAGEM:-leiturista,mapillary,geo360}   # Street View é proibido aqui
+      MODO_FONTES: ${MODO_FONTES:-simulado}                           # simulado | producao
+      MAPILLARY_TOKEN: ${MAPILLARY_TOKEN:-}
+      GEO360_BASE_URL: ${GEO360_BASE_URL:-https://portal-goiania.geo360.com.br/}
+    volumes:
+      - storage_imagens:/data/imagens:ro
+      - quarentena_imagens:/data/quarentena      # imagem bruta só em RAM, antes do blur
+    deploy:
+      replicas: ${COLLECTOR_REPLICAS:-2}
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      seed:
+        condition: service_completed_successfully
+    networks: [rede_dados]
+
+  # ---------------------------------------------------------------------------
+  # Worker de IA: YOLOv11 + blur LGPD + modelo preditivo + XAI — Etapa 3
+  # ---------------------------------------------------------------------------
+  ai_worker:
+    build: ./services/ai_worker
+    restart: unless-stopped
+    environment:
+      <<: [*amqp-env, *storage-env]
+      DATABASE_URL: postgresql://usr_ia:${DB_PASS_IA:-ia_dev}@db:5432/${POSTGRES_DB:-radar}
+      # Usado apenas pelo avaliador de elegibilidade à Tarifa Social.
+      DATABASE_URL_SOCIAL: postgresql://usr_ia_social:${DB_PASS_IA_SOCIAL:-ia_social_dev}@db:5432/${POSTGRES_DB:-radar}
+      YOLO_WEIGHTS: ${YOLO_WEIGHTS:-/models/yolo11n-fachada.pt}
+      YOLO_CONF_MIN: ${YOLO_CONF_MIN:-0.35}
+      YOLO_DEVICE: ${YOLO_DEVICE:-cpu}          # cpu | cuda:0
+      MODELO_VERSAO: ${MODELO_VERSAO:-radar-v0.1.0}
+      OMP_NUM_THREADS: ${OMP_NUM_THREADS:-2}
+    volumes:
+      - storage_imagens:/data/imagens           # grava SOMENTE imagens já anonimizadas
+      - quarentena_imagens:/data/quarentena
+      - modelos:/models
+    deploy:
+      replicas: ${AI_WORKER_REPLICAS:-2}
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      seed:
+        condition: service_completed_successfully
+    networks: [rede_dados]
+
+  # ---------------------------------------------------------------------------
+  # Frontend (React + Vite + Tailwind servido por Nginx) — Etapa 4
+  # ---------------------------------------------------------------------------
+  frontend:
+    build:
+      context: ./services/frontend
+      args:
+        VITE_API_URL: ${VITE_API_URL:-http://localhost:8000}
+    restart: unless-stopped
+    ports:
+      - "${FRONTEND_PORT:-5173}:80"
+    depends_on:
+      - api
+    networks: [rede_borda]
+
+  # ---------------------------------------------------------------------------
+  # Benchmark e experimentos (sob demanda; não sobe com `up`)
+  # ---------------------------------------------------------------------------
+  experiments:
+    build:
+      context: .
+      dockerfile: experiments/Dockerfile
+    profiles: ["experimentos"]
+    environment:
+      <<: *amqp-env
+      DATABASE_URL: postgresql://usr_experimento:${DB_PASS_EXPERIMENTO:-experimento_dev}@db:5432/${POSTGRES_DB:-radar}
+      EXPERIMENTO_N_UCS: ${EXPERIMENTO_N_UCS:-5000}
+      EXPERIMENTO_FOLDS: ${EXPERIMENTO_FOLDS:-5}
+      EXPERIMENTO_WORKERS: ${EXPERIMENTO_WORKERS:-1,2,4,8}
+    volumes:
+      - ./experiments/resultados:/app/experiments/resultados
+      - modelos:/models
+    depends_on:
+      db:
+        condition: service_healthy
+    networks: [rede_dados]
+
+volumes:
+  pgdata:
+  rabbitmq_data:
+  storage_imagens:     # imagens JÁ anonimizadas (blur de rostos/placas antes da persistência)
+  quarentena_imagens:  # imagens brutas em trânsito coletor -> IA; tmpfs = nunca tocam o disco
+    driver: local
+    driver_opts:
+      type: tmpfs
+      device: tmpfs
+      o: "size=512m,mode=1777"
+  modelos:             # pesos do YOLO e artefatos do modelo preditivo
+
+networks:
+  rede_dados:          # banco, broker, workers e API
+  rede_borda:          # navegador -> frontend -> API

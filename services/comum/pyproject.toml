@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "radar-comum"
+version = "0.2.0"
+description = "Código compartilhado do Radar Cadastral SANEAGO: tarifas, ganho esperado, mensagens e topologia AMQP"
+requires-python = ">=3.11"
+dependencies = ["pydantic>=2.6"]
+
+[project.optional-dependencies]
+amqp = ["aio-pika>=9.4"]
+
+[tool.setuptools.packages.find]
+include = ["radar_comum*"]

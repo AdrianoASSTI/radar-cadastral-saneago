@@ -1,0 +1,11 @@
+.env
+__pycache__/
+*.pyc
+.venv/
+node_modules/
+dist/
+*.pt
+*.onnx
+experiments/resultados/*
+!experiments/resultados/.gitkeep
+.DS_Store
